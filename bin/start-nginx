@@ -18,12 +18,7 @@ do
 	echo 'nginx-unicorn-buildpack: Waiting on rails initialization...'
 	sleep 1
 done
-
-#We need to start NGINX before we start the web process.
-#NGINX should start as a daemon and create a socket here: /tmp/nginx.socket
-#Expect nginx to run as daemon.
-echo 'nginx-unicorn-buildpack: Starting NGINX'
-bin/nginx -p . -c config/nginx.conf
+echo 'nginx-unicorn-buildpack: Rails initialized.'
 
 #If any child process dies, kill the parent.
 #Heroku will then crash this process.
@@ -33,4 +28,10 @@ handleSigChld() {
 	echo 'nginx-unicorn-buildpack: SIGCHLD handled.'
 	exit 1
 }
+
 echo 'nginx-unicorn-buildpack: Installed SIGCHLD trap.'
+#We need to start NGINX before we start the web process.
+#NGINX should start as a daemon and create a socket here: /tmp/nginx.socket
+#Expect nginx to run in foreground.
+echo 'nginx-unicorn-buildpack: Starting NGINX.'
+exec bin/nginx -p . -c config/nginx.conf
