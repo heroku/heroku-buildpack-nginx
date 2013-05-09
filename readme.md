@@ -1,6 +1,6 @@
 # Heroku Buildpack: NGINX
 
-Nginx-buildpack vendors nginx inside a dyno and connects NGINX to an app server via UNIX domain sockets. Both the app server and nginx logs are printed to stdout. NGINX is configured to use [l2met](https://github.com/ryandotsmith/l2met) conventions & heroku request ids.
+Nginx-buildpack vendors NGINX inside a dyno and connects NGINX to an app server via UNIX domain sockets. Both the app server and NGINX logs are printed to stdout. NGINX is configured to use [l2met](https://github.com/ryandotsmith/l2met) conventions & heroku request ids.
 
 ## Requirements
 
@@ -98,7 +98,7 @@ web: bin/start-nginx bundle exec unicorn -c config/unicorn.rb
 ```
 ```bash
 $ git add Procfile
-$ git commit -m 'Update procfile for nginx buildpack'
+$ git commit -m 'Update procfile for NGINX buildpack'
 ```
 
 Update Unicorn Config
@@ -116,7 +116,7 @@ end
 ```
 ```bash
 $ git add config/unicorn.rb
-$ git commit -m 'Update unicorn config to listen on nginx socket.'
+$ git commit -m 'Update unicorn config to listen on NGINX socket.'
 ```
 
 Deploy Changes
