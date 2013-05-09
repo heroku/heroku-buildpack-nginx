@@ -80,7 +80,7 @@ Update Procfile
 ```
 web: bundle exec unicorn -c config/unicorn.rb
 ```
-**Becomes:**
+Becomes:
 ```
 web: bin/start-nginx 'bundle exec unicorn -c config/unicorn.rb'
 ```
@@ -95,7 +95,7 @@ Update Unicorn Config
 #The only important thing to change:
 listen ENV['PORT']
 ```
-**Becomes:**
+Becomes:
 ```ruby
 #The only important thing to change:
 listen '/tmp/nginx.socket'
