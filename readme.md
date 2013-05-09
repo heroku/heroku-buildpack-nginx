@@ -28,6 +28,11 @@ worker_processes 4
 listen '/tmp/nginx.socket', backlog: 8
 ```
 
+Install Gems
+```bash
+$ bundle install
+```
+
 Create & Push Heroku App:
 ```bash
 $ heroku create --buildpack https://github.com/ddollar/heroku-buildpack-multi.git
