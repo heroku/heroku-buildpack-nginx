@@ -1,4 +1,4 @@
-# Heroku Buildpack: nginx
+# Heroku Buildpack: NGINX
 
 Nginx-buildpack vendors nginx inside a dyno and connects NGINX to an app server via UNIX domain sockets. Both the app server and nginx logs are printed to stdout. NGINX is configured to use [l2met](https://github.com/ryandotsmith/l2met) conventions & heroku request ids.
 
