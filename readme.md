@@ -2,6 +2,14 @@
 
 Nginx-unicorn-buildpack vendors nginx inside a dyno and connects unicorn to nginx over a UNIX domain socket. Both unicorn and nginx logs are printed to stdout using [l2met](https://github.com/ryandotsmith/l2met) conventions.
 
+## Procfile & The Web Process
+
+Nginx-unicorn-buildpack provides a web process type for Heroku. This means that the web process type defined in your app's Procfile will be ignored. After starting nginx, this buildpack's web process type will start unicorn with the following command:
+
+```bash
+bundle exec unicorn -c config/unicorn.rb
+```
+
 ## Setup
 
 ```bash
