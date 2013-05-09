@@ -4,7 +4,6 @@ set -e
 
 cp bin/nginx "$1/bin/"
 cp bin/start-nginx "$1/bin/"
-cp bin/start-unicorn "$1/bin/"
 echo '-----> Installed NGINX 1.4.1'
 
 mkdir -p "$1/config"

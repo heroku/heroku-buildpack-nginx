@@ -1,2 +1,0 @@
-#!/usr/bin/env bash
-bundle exec unicorn -c config/unicorn.rb

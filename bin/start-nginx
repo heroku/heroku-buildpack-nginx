@@ -3,8 +3,9 @@ erb config/nginx.conf.erb > config/nginx.conf
 mkdir -p logs
 touch logs/access.log logs/error.log
 (tail -qF -n 0 logs/*.log &)
-pwd
-ls
-cat Procfile
+#We need to start NGINX before we start the web process.
+#NGINX should start as a daemon and create a socket here: /tmp/nginx.socket
 bin/nginx -p . -c config/nginx.conf
-bin/start-unicorn
+#Take the command passed to this bin and start it.
+#E.g. bin/start-nginx bundle exec unicorn -c config/unicorn.rb
+eval '$1'
