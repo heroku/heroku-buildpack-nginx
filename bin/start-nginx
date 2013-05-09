@@ -23,6 +23,7 @@ echo "nginx-unicorn-buildpack: Starting $@"
 while [[ ! -f /tmp/rails-initialized ]]
 do
 	echo 'nginx-unicorn-buildpack: Waiting on rails initialization...'
+	( exec sleep 1 )
 done
 #We need to start NGINX before we start the web process.
 #NGINX should start as a daemon and create a socket here: /tmp/nginx.socket
