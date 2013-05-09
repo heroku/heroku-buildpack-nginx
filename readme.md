@@ -1,14 +1,21 @@
-# Heroku Buildpack: nginx/unicorn
+# Heroku Buildpack: nginx
 
-Nginx-unicorn-buildpack vendors nginx inside a dyno and connects unicorn to nginx over a UNIX domain socket. Both unicorn and nginx logs are printed to stdout using [l2met](https://github.com/ryandotsmith/l2met) conventions.
+Nginx-buildpack vendors nginx inside a dyno and connects NGINX to an app server via UNIX domain sockets. Both the app server and nginx logs are printed to stdout. NGINX is configured to use [l2met](https://github.com/ryandotsmith/l2met) conventions & heroku request ids.
+
+## Requirements
+
+* Your webserver listens to the socket at `/tmp/nginx.socket`.
+* You touch `/tmp/app-initialized` when you are ready for traffic.
 
 ## Procfile & The Web Process
 
-Nginx-unicorn-buildpack provides a command named `bin/start-nginx` this command takes another command as an argument. You must pass your unicorn command to `start-nginx` to get NGINX and Unicorn running properly. For example:
+Nginx-buildpack provides a command named `bin/start-nginx` this command takes another command as an argument. You must pass your app server's startup command to `start-nginx`.
+
+For example, to get NGINX and Unicorn up and running:
 
 ```bash
 $ cat Procfile
-web: bin/start-nginx 'bundle exec unicorn -c config/unicorn.rb'
+web: bin/start-nginx bundle exec unicorn -c config/unicorn.rb
 ```
 
 ## Setup A New Heroku App
@@ -31,10 +38,15 @@ run Proc.new {[200,{'Content-Type' => 'text/plain'}, ["hello world"]]}
 
 **config/unicorn.rb**
 ```ruby
+require 'fileutils'
 preload_app true
 timeout 5
 worker_processes 4
 listen '/tmp/nginx.socket', backlog: 8
+
+before_fork do |server,worker|
+	FileUtils.touch('/tmp/app-initialized')
+end
 ```
 
 Install Gems
@@ -92,13 +104,15 @@ $ git commit -m 'Update procfile for nginx buildpack'
 Update Unicorn Config
 
 ```ruby
-#The only important thing to change:
 listen ENV['PORT']
 ```
 Becomes:
 ```ruby
-#The only important thing to change:
+require 'fileutils'
 listen '/tmp/nginx.socket'
+before_fork do |server,worker|
+	FileUtils.touch('/tmp/app-initialized')
+end
 ```
 ```bash
 $ git add config/unicorn.rb

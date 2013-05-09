@@ -7,31 +7,31 @@ erb config/nginx.conf.erb > config/nginx.conf
 mkdir -p logs
 touch logs/access.log logs/error.log
 tail -qF -n 0 logs/*.log &
-echo 'nginx-unicorn-buildpack: Established log tail.'
+echo 'nginx-buildpack: Established log tail.'
 
 #Take the command passed to this bin and start it.
 #E.g. bin/start-nginx bundle exec unicorn -c config/unicorn.rb
 ( exec $@ ) &
-echo "nginx-unicorn-buildpack: Starting $@"
-while [[ ! -f /tmp/rails-initialized ]]
+echo "nginx-buildpack: Starting $@"
+while [[ ! -f /tmp/app-initialized ]]
 do
-	echo 'nginx-unicorn-buildpack: Waiting on rails initialization...'
+	echo 'nginx-buildpack: Waiting on app initialization...'
 	sleep 1
 done
-echo 'nginx-unicorn-buildpack: Rails initialized.'
+echo 'nginx-buildpack: App initialized.'
 
 #If any child process dies, kill the parent.
 #Heroku will then crash this process.
 set -o monitor
 trap handleSigChld SIGCHLD
 handleSigChld() {
-	echo 'nginx-unicorn-buildpack: SIGCHLD handled.'
+	echo 'nginx-buildpack: SIGCHLD handled.'
 	exit 1
 }
 
-echo 'nginx-unicorn-buildpack: Installed SIGCHLD trap.'
+echo 'nginx-buildpack: Installed SIGCHLD trap.'
 #We need to start NGINX before we start the web process.
 #NGINX should start as a daemon and create a socket here: /tmp/nginx.socket
 #Expect nginx to run in foreground.
-echo 'nginx-unicorn-buildpack: Starting NGINX.'
+echo 'nginx-buildpack: Starting NGINX.'
 exec bin/nginx -p . -c config/nginx.conf
