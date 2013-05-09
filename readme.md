@@ -5,10 +5,18 @@ Nginx-buildpack vendors NGINX inside a dyno and connects NGINX to an app server 
 * NGINX Version: 1.4.1
 * NGINX Buildpack Version: 0.1
 
+## Features
+
+* [L2met](https://github.com/ryandotsmith/l2met) friendly NGINX logs.
+* [Heroku request ids](https://devcenter.heroku.com/articles/http-request-id) embedded in NGINX logs.
+* Crashes dyno if NGINX or App server crashes. Safety first.
+* Works with any app server.
+
 ## Requirements
 
 * Your webserver listens to the socket at `/tmp/nginx.socket`.
 * You touch `/tmp/app-initialized` when you are ready for traffic.
+* You can start your web server with a shell command.
 
 ## Procfile & The Web Process
 
