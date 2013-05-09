@@ -56,3 +56,16 @@ Visit App
 ```
 $ heroku open
 ```
+
+## Setup on Existing Apps
+
+You will need to update your buildpack URL and setup the multi buildpacks. Be sure to test on staging first.
+
+```bash
+$ heroku config:set BUILDPAKC_URL=https://github.com/ryandotsmith/nginx-unicorn-buildpack
+$ echo 'https://github.com/heroku/heroku-buildpack-ruby.git' >> .buildpacks
+$ echo 'https://github.com/ryandotsmith/nginx-unicorn-buildpack.git' >> .buildpacks
+$ git add .
+$ git commit -am "init"
+$ git push heroku master
+```
