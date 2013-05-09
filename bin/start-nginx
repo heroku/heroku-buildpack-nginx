@@ -1,11 +1,27 @@
 #!/usr/bin/env bash
+
+#If any child process dies, kill the parent.
+#Heroku will then crash this process.
+trap handleSigChld SIGCHLD
+handleSigChld() {
+	exit 1
+}
+
 erb config/nginx.conf.erb > config/nginx.conf
 mkdir -p logs
 touch logs/access.log logs/error.log
 (tail -qF -n 0 logs/*.log &)
-#We need to start NGINX before we start the web process.
-#NGINX should start as a daemon and create a socket here: /tmp/nginx.socket
-bin/nginx -p . -c config/nginx.conf
+
 #Take the command passed to this bin and start it.
 #E.g. bin/start-nginx bundle exec unicorn -c config/unicorn.rb
-eval '$1'
+(exec $@) &
+while [[ ! -f /tmp/rails-initialized ]]
+do
+	echo 'Waiting for rails to initialize'
+	sleep 1
+done
+#We need to start NGINX before we start the web process.
+#NGINX should start as a daemon and create a socket here: /tmp/nginx.socket
+#
+#Expect nginx to run in foreground.
+bin/nginx -p . -c config/nginx.conf
