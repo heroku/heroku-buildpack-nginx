@@ -4,13 +4,14 @@ Nginx-unicorn-buildpack vendors nginx inside a dyno and connects unicorn to ngin
 
 ## Procfile & The Web Process
 
-Nginx-unicorn-buildpack provides a web process type for Heroku. This means that the web process type defined in your app's Procfile will be ignored. After starting nginx, this buildpack's web process type will start unicorn with the following command:
+Nginx-unicorn-buildpack provides a command named `bin/start-nginx` this command takes another command as an argument. You must pass your unicorn command to `start-nginx` to get NGINX and Unicorn running properly. For example:
 
 ```bash
-bundle exec unicorn -c config/unicorn.rb
+$ cat Procfile
+web: bin/start-nginx 'bundle exec unicorn -c config/unicorn.rb'
 ```
 
-## Setup
+## Setup A New Heroku App
 
 ```bash
 $ mkdir myapp; cd myapp
@@ -41,6 +42,11 @@ Install Gems
 $ bundle install
 ```
 
+Create Procfile
+```
+web: bin/start-nginx 'bundle exec unicorn -c config/unicorn.rb'
+```
+
 Create & Push Heroku App:
 ```bash
 $ heroku create --buildpack https://github.com/ddollar/heroku-buildpack-multi.git
@@ -61,11 +67,41 @@ $ heroku open
 
 You will need to update your buildpack URL and setup the multi buildpacks. Be sure to test on staging first.
 
+Update Buildpacks
 ```bash
 $ heroku config:set BUILDPACK_URL=https://github.com/ddollar/heroku-buildpack-multi.git
 $ echo 'https://github.com/heroku/heroku-buildpack-ruby.git' >> .buildpacks
 $ echo 'https://github.com/ryandotsmith/nginx-unicorn-buildpack.git' >> .buildpacks
-$ git add .
-$ git commit -am "init"
+$ git add .buildpacks
+$ git commit -m 'Add multi-buildpack'
+```
+
+Update Procfile
+```
+web: bundle exec unicorn -c config/unicorn.rb
+```
+**Becomes:**
+```
+web: bin/start-nginx 'bundle exec unicorn -c config/unicorn.rb'
+```
+```bash
+$ git add Procfile
+$ git commit -m 'Update procfile for nginx buildpack'
+```
+
+Update Unicorn Config
+
+```ruby
+#The only important thing to change:
+listen ENV['PORT']
+```
+**Becomes:**
+```ruby
+#The only important thing to change:
+listen '/tmp/nginx.socket'
+```
+
+Deploy Changes
+```bash
 $ git push heroku master
 ```
