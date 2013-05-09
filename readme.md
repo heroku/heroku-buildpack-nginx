@@ -11,6 +11,7 @@ Nginx-buildpack vendors NGINX inside a dyno and connects NGINX to an app server 
 * [Heroku request ids](https://devcenter.heroku.com/articles/http-request-id) embedded in NGINX logs.
 * Crashes dyno if NGINX or App server crashes. Safety first.
 * Works with any app server.
+* Customize NGINX config.
 
 ## Requirements
 
@@ -28,6 +29,10 @@ For example, to get NGINX and Unicorn up and running:
 $ cat Procfile
 web: bin/start-nginx bundle exec unicorn -c config/unicorn.rb
 ```
+
+## Custom NGINX Config
+
+You can provide your own NGINX config by create a file named `nginx.conf.erb` in the config direcotry of your app. You can start by copying the buildpack's [default config file](https://github.com/ryandotsmith/nginx-buildpack/blob/master/config/nginx.conf.erb).
 
 ## Setup A New Heroku App
 
