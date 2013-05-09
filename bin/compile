@@ -1,11 +1,15 @@
 #!/usr/bin/env bash
 
 set -e
+
 cp bin/nginx "$1/bin/"
 cp bin/start-nginx "$1/bin/"
 cp bin/start-unicorn "$1/bin/"
-echo '-----> Copied start-nginx & start-unicorn into app/bin.'
-mkdir -p "$1/etc"
-cp etc/mime.types "$1/etc/"
-cp etc/nginx.conf.erb "$1/etc/"
-echo '-----> Copied nginx config into app/etc'
+echo '-----> Installed NGINX 1.4.1'
+
+mkdir -p "$1/config"
+cp config/mime.types "$1/config/"
+cp config/nginx.conf.erb "$1/config/"
+echo '-----> NGINX config copied to app/config/'
+
+exit 0
