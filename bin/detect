@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
 # bin/detect <build-dir>
+echo 'nginx-unicorn-buildpack'
 exit 0
