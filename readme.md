@@ -56,7 +56,7 @@ $ bundle install
 
 Create Procfile
 ```
-web: bin/start-nginx 'bundle exec unicorn -c config/unicorn.rb'
+web: bin/start-nginx bundle exec unicorn -c config/unicorn.rb
 ```
 
 Create & Push Heroku App:
@@ -94,7 +94,7 @@ web: bundle exec unicorn -c config/unicorn.rb -p $PORT
 ```
 Becomes:
 ```
-web: bin/start-nginx 'bundle exec unicorn -c config/unicorn.rb'
+web: bin/start-nginx bundle exec unicorn -c config/unicorn.rb
 ```
 ```bash
 $ git add Procfile
