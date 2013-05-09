@@ -100,6 +100,10 @@ Becomes:
 #The only important thing to change:
 listen '/tmp/nginx.socket'
 ```
+```bash
+$ git add config/unicorn.rb
+$ git commit -m 'Update unicorn config to listen on nginx socket.'
+```
 
 Deploy Changes
 ```bash
