@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+cat <<EOF
+---
+config_vars:
+  PATH: /usr/local/bin:/usr/bin:/bin
+default_process_types:
+  web: bin/start-nginx
+EOF

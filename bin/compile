@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+set -e
+
+BUILD_DIR=$1
+CACHE_DIR=$2
+
+echo 'Using NGINX/Unicorn Buildpack'
