@@ -5,5 +5,5 @@ erb etc/nginx.conf.erb > etc/nginx.conf
 mkdir -p logs
 touch logs/access.log logs/error.log
 (tail -qF -n 0 logs/*.log &)
-exec nginx -p . -c etc/nginx.conf
-exec start-unicorn
+exec bin/nginx -p . -c etc/nginx.conf
+exec bin/start-unicorn
