@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+pwd
+ls
 erb etc/nginx.conf.erb > etc/nginx.conf
 mkdir -p logs
 touch logs/access.log logs/error.log
