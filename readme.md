@@ -2,20 +2,6 @@
 
 Nginx-unicorn-buildpack vendors nginx inside a dyno and connects unicorn to nginx over a UNIX domain socket. Both unicorn and nginx logs are printed to stdout using [l2met](https://github.com/ryandotsmith/l2met) conventions.
 
-## Prerequisites
-
-* Unicorn listens on /tmp/nginx.socket
-* Unicorn configuration located at RAILS_ROOT/config/unicorn.rb
-
-Sample Unicorn Configuration:
-
-```ruby
-preload_app true
-timeout 5
-worker_processes 4
-listen '/tmp/nginx.socket', backlog: 8
-```
-
 ## Setup
 
 ```bash
