@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
-pwd
-ls
 erb etc/nginx.conf.erb > etc/nginx.conf
 mkdir -p logs
 touch logs/access.log logs/error.log
 (tail -qF -n 0 logs/*.log &)
-exec bin/nginx -p . -c etc/nginx.conf
-exec bin/start-unicorn
+bin/nginx -p . -c etc/nginx.conf
+bin/start-unicorn
