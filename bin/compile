@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 set -e
+cp bin/nginx "$1/bin/"
 cp bin/start-nginx "$1/bin/"
 cp bin/start-unicorn "$1/bin/"
 echo '-----> Copied start-nginx & start-unicorn into app/bin.'
