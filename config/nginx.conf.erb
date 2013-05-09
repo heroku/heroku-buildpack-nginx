@@ -6,7 +6,7 @@ events {
 }
 
 http {
-	log_format l2met 'measure.nginx.service=$request_time request-id=$http_heroku_request_id';
+	log_format l2met 'measure.nginx.service=$request_time request_id=$http_heroku_request_id';
 	access_log logs/access.log l2met;
 
 	include mime.types;
