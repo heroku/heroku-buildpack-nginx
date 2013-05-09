@@ -1,7 +1,14 @@
 #!/usr/bin/env bash
 
+erb config/nginx.conf.erb > config/nginx.conf
+mkdir -p logs
+touch logs/access.log logs/error.log
+tail -qF -n 0 logs/*.log &
+echo 'nginx-unicorn-buildpack: Established log tail.'
+
 #If any child process dies, kill the parent.
 #Heroku will then crash this process.
+echo 'nginx-unicorn-buildpack: Starting SIGCHLD handler.'
 set -o monitor
 trap handleSigChld SIGCHLD
 handleSigChld() {
@@ -9,11 +16,6 @@ handleSigChld() {
 	exit 1
 }
 
-erb config/nginx.conf.erb > config/nginx.conf
-mkdir -p logs
-touch logs/access.log logs/error.log
-tail -qF -n 0 logs/*.log &
-echo 'nginx-unicorn-buildpack: Established log tail.'
 
 #Take the command passed to this bin and start it.
 #E.g. bin/start-nginx bundle exec unicorn -c config/unicorn.rb
