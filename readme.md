@@ -38,6 +38,8 @@ Create & Push Heroku App:
 $ heroku create --buildpack https://github.com/ddollar/heroku-buildpack-multi.git
 $ echo 'https://github.com/heroku/heroku-buildpack-ruby.git' >> .buildpacks
 $ echo 'https://github.com/ryandotsmith/buildpack-nginx-unicorn.git' >> .buildpacks
+$ git add .
+$ git commit -am "init"
 $ git push heroku master
 $ heroku logs -t
 ```
