@@ -78,7 +78,7 @@ $ git commit -m 'Add multi-buildpack'
 
 Update Procfile
 ```
-web: bundle exec unicorn -c config/unicorn.rb
+web: bundle exec unicorn -c config/unicorn.rb -p $PORT
 ```
 Becomes:
 ```
