@@ -10,7 +10,7 @@ handleSigChld() {
 erb config/nginx.conf.erb > config/nginx.conf
 mkdir -p logs
 touch logs/access.log logs/error.log
-(tail -qF -n 0 logs/*.log &)
+(exec tail -qF -n 0 logs/*.log &)
 
 #Take the command passed to this bin and start it.
 #E.g. bin/start-nginx bundle exec unicorn -c config/unicorn.rb
