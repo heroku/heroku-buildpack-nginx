@@ -2,7 +2,6 @@
 
 #If any child process dies, kill the parent.
 #Heroku will then crash this process.
-set -o monitor
 trap handleSigChld SIGCHLD
 handleSigChld() {
 	echo 'nginx-unicorn-buildpack: SIGCHLD handled.'
