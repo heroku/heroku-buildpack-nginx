@@ -4,6 +4,6 @@ set -e
 
 BUILD_DIR=$1
 CACHE_DIR=$2
-cp start-nginx "$BUILD_DIR/bin/"
-cp start-unicorn "$BUILD_DIR/bin/"
+cp "$CACHE_DIR/bin/start-nginx" "$BUILD_DIR/bin/"
+cp "$CACHE_DIR/bin/start-unicorn" "$BUILD_DIR/bin/"
 echo 'Using NGINX/Unicorn Buildpack'
