@@ -16,19 +16,13 @@ handleSigChld() {
 	exit 1
 }
 
-
 #Take the command passed to this bin and start it.
 #E.g. bin/start-nginx bundle exec unicorn -c config/unicorn.rb
 ( exec $@ ) &
-echo 'nginx-unicorn-buildpack: Starting $@'
-while [[ ! -f /tmp/rails-initialized ]]
-do
-	echo 'nginx-unicorn-buildpack: Waiting for rails to initialize.'
-	sleep 1
-done
+echo "nginx-unicorn-buildpack: Starting $@"
+while [[ ! -f /tmp/rails-initialized ]]; do; done
 #We need to start NGINX before we start the web process.
 #NGINX should start as a daemon and create a socket here: /tmp/nginx.socket
-#
 #Expect nginx to run in foreground.
 echo 'nginx-unicorn-buildpack: Starting NGINX'
 bin/nginx -p . -c config/nginx.conf
