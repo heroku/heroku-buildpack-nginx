@@ -3,5 +3,8 @@ erb config/nginx.conf.erb > config/nginx.conf
 mkdir -p logs
 touch logs/access.log logs/error.log
 (tail -qF -n 0 logs/*.log &)
+pwd
+ls
+cat Procfile
 bin/nginx -p . -c config/nginx.conf
 bin/start-unicorn
