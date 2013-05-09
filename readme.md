@@ -63,7 +63,7 @@ Create & Push Heroku App:
 ```bash
 $ heroku create --buildpack https://github.com/ddollar/heroku-buildpack-multi.git
 $ echo 'https://github.com/heroku/heroku-buildpack-ruby.git' >> .buildpacks
-$ echo 'https://github.com/ryandotsmith/nginx-unicorn-buildpack.git' >> .buildpacks
+$ echo 'https://github.com/ryandotsmith/nginx-buildpack.git' >> .buildpacks
 $ git add .
 $ git commit -am "init"
 $ git push heroku master
@@ -83,7 +83,7 @@ Update Buildpacks
 ```bash
 $ heroku config:set BUILDPACK_URL=https://github.com/ddollar/heroku-buildpack-multi.git
 $ echo 'https://github.com/heroku/heroku-buildpack-ruby.git' >> .buildpacks
-$ echo 'https://github.com/ryandotsmith/nginx-unicorn-buildpack.git' >> .buildpacks
+$ echo 'https://github.com/ryandotsmith/nginx-buildpack.git' >> .buildpacks
 $ git add .buildpacks
 $ git commit -m 'Add multi-buildpack'
 ```
