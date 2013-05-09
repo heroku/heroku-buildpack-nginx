@@ -17,7 +17,7 @@ touch logs/access.log logs/error.log
 (exec $@) &
 while [[ ! -f /tmp/rails-initialized ]]
 do
-	echo 'Waiting for rails to initialize'
+	echo 'nginx-unicorn-buildpack: Waiting for rails to initialize'
 	sleep 1
 done
 #We need to start NGINX before we start the web process.
