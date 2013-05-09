@@ -62,7 +62,7 @@ $ heroku open
 You will need to update your buildpack URL and setup the multi buildpacks. Be sure to test on staging first.
 
 ```bash
-$ heroku config:set BUILDPAKC_URL=https://github.com/ryandotsmith/nginx-unicorn-buildpack
+$ heroku config:set BUILDPACK_URL=https://github.com/ddollar/heroku-buildpack-multi.git
 $ echo 'https://github.com/heroku/heroku-buildpack-ruby.git' >> .buildpacks
 $ echo 'https://github.com/ryandotsmith/nginx-unicorn-buildpack.git' >> .buildpacks
 $ git add .
