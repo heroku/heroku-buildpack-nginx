@@ -4,20 +4,21 @@
 #Heroku will then crash this process.
 trap handleSigChld SIGCHLD
 handleSigChld() {
+	echo 'nginx-unicorn-buildpack: SIGCHLD handled.'
 	exit 1
 }
 
 erb config/nginx.conf.erb > config/nginx.conf
 mkdir -p logs
 touch logs/access.log logs/error.log
-(exec tail -qF -n 0 logs/*.log &)
+tail -qF -n 0 logs/*.log &
 
 #Take the command passed to this bin and start it.
 #E.g. bin/start-nginx bundle exec unicorn -c config/unicorn.rb
-(exec $@) &
+( exec $@ ) &
 while [[ ! -f /tmp/rails-initialized ]]
 do
-	echo 'nginx-unicorn-buildpack: Waiting for rails to initialize'
+	echo 'nginx-unicorn-buildpack: Waiting for rails to initialize.'
 	sleep 1
 done
 #We need to start NGINX before we start the web process.
