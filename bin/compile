@@ -5,5 +5,5 @@ cp bin/start-nginx "$1/bin/"
 cp bin/start-unicorn "$1/bin/"
 echo '-----> Copied start-nginx & start-unicorn into app/bin.'
 mkdir -p "$1/etc"
-cp -r etc/ "$1/etc"
+cp -r etc/ "$1/etc/"
 echo '-----> Copied nginx config into app/etc'
