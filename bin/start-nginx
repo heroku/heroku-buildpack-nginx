@@ -22,6 +22,7 @@ echo 'nginx-unicorn-buildpack: Installed SIGCHLD trap.'
 echo "nginx-unicorn-buildpack: Starting $@"
 while [[ ! -f /tmp/rails-initialized ]]
 do
+	sleep 0.2
 done
 #We need to start NGINX before we start the web process.
 #NGINX should start as a daemon and create a socket here: /tmp/nginx.socket
