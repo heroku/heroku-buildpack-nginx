@@ -1,5 +1,7 @@
 # Heroku Buildpack: NGINX/Unicorn
 
+## Synopsis
+
 This buildpack starts NGINX 1.4.1 and proxies requests to /tmp/nginx.socket and expects Unicorn to handle requests on that socket.
 
 ## Prerequisites
