@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -o monitor
 
 #Evaluate config to get $PORT
 erb config/nginx.conf.erb > config/nginx.conf
@@ -26,7 +27,6 @@ echo 'nginx-buildpack: App initialized.'
 #This will in turn cause heroku to crash the dyno.
 #We trap this signal here because at this point in the
 #file, there should be no more commands/exits.
-set -o monitor
 trap handleSigChld SIGCHLD
 handleSigChld() {
 	echo 'nginx-buildpack: SIGCHLD handled.'
