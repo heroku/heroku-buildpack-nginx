@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -o monitor
 
 #Evaluate config to get $PORT
 erb config/nginx.conf.erb > config/nginx.conf
@@ -7,7 +6,7 @@ erb config/nginx.conf.erb > config/nginx.conf
 #Redirect NGINX logs to stdout.
 mkdir -p logs
 touch logs/access.log logs/error.log
-tail -qF -n 0 logs/*.log &
+(exec tail -qF -n 0 logs/*.log ) &
 echo 'nginx-buildpack: Established log tail.'
 
 #Take the command passed to this bin and start it.
@@ -27,6 +26,7 @@ echo 'nginx-buildpack: App initialized.'
 #This will in turn cause heroku to crash the dyno.
 #We trap this signal here because at this point in the
 #file, there should be no more commands/exits.
+set -o monitor
 trap handleSigChld SIGCHLD
 handleSigChld() {
 	echo 'nginx-buildpack: SIGCHLD handled.'
@@ -36,5 +36,6 @@ echo 'nginx-buildpack: Installed SIGCHLD trap.'
 
 #We expect nginx to run in foreground.
 #We also expect a socket to be at /tmp/nginx.socket.
-echo 'nginx-buildpack: Starting NGINX.'
-exec bin/nginx -p . -c config/nginx.conf
+( exec bin/nginx -p . -c config/nginx.conf ) &
+echo 'nginx-buildpack: NGINX started.'
+wait
