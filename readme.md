@@ -1,17 +1,11 @@
 # Heroku Buildpack: NGINX
 
-Nginx-buildpack vendors NGINX inside a dyno and connects NGINX to an app server via UNIX domain sockets. Both the app server and NGINX logs are printed to stdout. NGINX is configured to use [l2met](https://github.com/ryandotsmith/l2met) conventions & heroku request ids.
+Nginx-buildpack vendors NGINX inside a dyno and connects NGINX to an app server via UNIX domain sockets.
 
+## Versions
+
+* Buildpack Version: 0.1
 * NGINX Version: 1.4.1
-* NGINX Buildpack Version: 0.1
-
-## Features
-
-* [L2met](https://github.com/ryandotsmith/l2met) friendly NGINX logs.
-* [Heroku request ids](https://devcenter.heroku.com/articles/http-request-id) embedded in NGINX logs.
-* Crashes dyno if NGINX or App server crashes. Safety first.
-* Works with any app server.
-* Customize NGINX config.
 
 ## Requirements
 
@@ -19,7 +13,31 @@ Nginx-buildpack vendors NGINX inside a dyno and connects NGINX to an app server 
 * You touch `/tmp/app-initialized` when you are ready for traffic.
 * You can start your web server with a shell command.
 
-## Procfile & The Web Process
+## Features
+
+* Unified NXNG/App Server logs.
+* [L2met](https://github.com/ryandotsmith/l2met) friendly NGINX log format.
+* [Heroku request ids](https://devcenter.heroku.com/articles/http-request-id) embedded in NGINX logs.
+* Crashes dyno if NGINX or App server crashes. Safety first.
+* Language/App Server agnostic.
+* Customizable NGINX config.
+* Application coordinated dyno starts.
+
+### Logging
+
+NGINX will output the following style of logs:
+
+```
+measure.nginx.service=0.007 request_id=e2c79e86b3260b9c703756ec93f8a66d
+```
+
+You can correlate this id with your Heroku router logs:
+
+```
+at=info method=GET path=/ host=salty-earth-7125.herokuapp.com request_id=e2c79e86b3260b9c703756ec93f8a66d fwd="67.180.77.184" dyno=web.1 connect=1ms service=8ms status=200 bytes=21
+```
+
+### Language/App Server Agnostic
 
 Nginx-buildpack provides a command named `bin/start-nginx` this command takes another command as an argument. You must pass your app server's startup command to `start-nginx`.
 
@@ -30,11 +48,62 @@ $ cat Procfile
 web: bin/start-nginx bundle exec unicorn -c config/unicorn.rb
 ```
 
-## Custom NGINX Config
+### Customizable NGINX Config
 
 You can provide your own NGINX config by create a file named `nginx.conf.erb` in the config direcotry of your app. You can start by copying the buildpack's [default config file](https://github.com/ryandotsmith/nginx-buildpack/blob/master/config/nginx.conf.erb).
 
-## Setup A New Heroku App
+### Application/Dyno coordination
+
+The buildpack will not start NGINX until a file has been written to `/tmp/app-initialized`. Since NGINX binds to the dyno's $PORT and since the $PORT determines if the app can receive traffic, you can delay NGINX accepting traffic until your application is ready to handle it. The examples below show how/when you should write the file when working with Unicorn.
+
+## Setup
+
+Here are 2 setup examples. One example for a new app, another for an existing app. In both cases, we are working with ruby & unicorn. Keep in mind that this buildpack is not ruby specific.
+
+### Existing App
+
+Update Buildpacks
+```bash
+$ heroku config:set BUILDPACK_URL=https://github.com/ddollar/heroku-buildpack-multi.git
+$ echo 'https://github.com/heroku/heroku-buildpack-ruby.git' >> .buildpacks
+$ echo 'https://github.com/ryandotsmith/nginx-buildpack.git' >> .buildpacks
+$ git add .buildpacks
+$ git commit -m 'Add multi-buildpack'
+```
+Update Procfile
+```
+web: bundle exec unicorn -c config/unicorn.rb -p $PORT
+```
+Procfile Becomes:
+```
+web: bin/start-nginx bundle exec unicorn -c config/unicorn.rb
+```
+```bash
+$ git add Procfile
+$ git commit -m 'Update procfile for NGINX buildpack'
+```
+Update Unicorn Config
+```ruby
+listen ENV['PORT']
+```
+Config Becomes:
+```ruby
+require 'fileutils'
+listen '/tmp/nginx.socket'
+before_fork do |server,worker|
+	FileUtils.touch('/tmp/app-initialized')
+end
+```
+```bash
+$ git add config/unicorn.rb
+$ git commit -m 'Update unicorn config to listen on NGINX socket.'
+```
+Deploy Changes
+```bash
+$ git push heroku master
+```
+
+### New App
 
 ```bash
 $ mkdir myapp; cd myapp
@@ -64,17 +133,14 @@ before_fork do |server,worker|
 	FileUtils.touch('/tmp/app-initialized')
 end
 ```
-
 Install Gems
 ```bash
 $ bundle install
 ```
-
 Create Procfile
 ```
 web: bin/start-nginx bundle exec unicorn -c config/unicorn.rb
 ```
-
 Create & Push Heroku App:
 ```bash
 $ heroku create --buildpack https://github.com/ddollar/heroku-buildpack-multi.git
@@ -85,59 +151,9 @@ $ git commit -am "init"
 $ git push heroku master
 $ heroku logs -t
 ```
-
 Visit App
 ```
 $ heroku open
-```
-
-## Setup on Existing Apps
-
-You will need to update your buildpack URL and setup the multi buildpacks. Be sure to test on staging first.
-
-Update Buildpacks
-```bash
-$ heroku config:set BUILDPACK_URL=https://github.com/ddollar/heroku-buildpack-multi.git
-$ echo 'https://github.com/heroku/heroku-buildpack-ruby.git' >> .buildpacks
-$ echo 'https://github.com/ryandotsmith/nginx-buildpack.git' >> .buildpacks
-$ git add .buildpacks
-$ git commit -m 'Add multi-buildpack'
-```
-
-Update Procfile
-```
-web: bundle exec unicorn -c config/unicorn.rb -p $PORT
-```
-Becomes:
-```
-web: bin/start-nginx bundle exec unicorn -c config/unicorn.rb
-```
-```bash
-$ git add Procfile
-$ git commit -m 'Update procfile for NGINX buildpack'
-```
-
-Update Unicorn Config
-
-```ruby
-listen ENV['PORT']
-```
-Becomes:
-```ruby
-require 'fileutils'
-listen '/tmp/nginx.socket'
-before_fork do |server,worker|
-	FileUtils.touch('/tmp/app-initialized')
-end
-```
-```bash
-$ git add config/unicorn.rb
-$ git commit -m 'Update unicorn config to listen on NGINX socket.'
-```
-
-Deploy Changes
-```bash
-$ git push heroku master
 ```
 
 ## License
