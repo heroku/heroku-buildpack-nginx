@@ -41,7 +41,7 @@ echo 'nginx-buildpack: App initialized.'
 (
 	#We expect nginx to run in foreground.
 	#We also expect a socket to be at /tmp/nginx.socket.
-	exec bin/nginx -p . -c config/nginx.conf
+	exec bin/nginx -p . -c config/nginx.conf &
 	echo 'nginx-buildpack: NGINX started.'
 	wait
 	echo "at=nginx-server-crash" > $psmgr
