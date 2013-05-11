@@ -7,19 +7,22 @@ mkfifo $psmgr
 #Evaluate config to get $PORT
 erb config/nginx.conf.erb > config/nginx.conf
 
-#Redirect NGINX logs to stdout.
-mkdir -p logs/nginx
-touch logs/nginx/access.log logs/nginx/error.log
+#Start log redirection.
 (
-	tail -qF -n 0 logs/nginx/*.log &
+	#Initialize log directory.
+	mkdir -p logs/nginx
+	touch logs/nginx/access.log logs/nginx/error.log
+	#Redirect NGINX logs to stdout.
+	exec tail -qF -n 0 logs/nginx/*.log &
 	echo 'nginx-buildpack: Established log tail.'
 	wait
 	echo 'at=log-tail-crash' > $psmgr
 ) &
 
-#Take the command passed to this bin and start it.
-#E.g. bin/start-nginx bundle exec unicorn -c config/unicorn.rb
+#Start App Server
 (
+	#Take the command passed to this bin and start it.
+	#E.g. bin/start-nginx bundle exec unicorn -c config/unicorn.rb
 	exec $@
 	echo "nginx-buildpack: Starting $@"
 	wait
@@ -34,16 +37,17 @@ do
 done
 echo 'nginx-buildpack: App initialized.'
 
-#We expect nginx to run in foreground.
-#We also expect a socket to be at /tmp/nginx.socket.
+#Start NGINX
 (
+	#We expect nginx to run in foreground.
+	#We also expect a socket to be at /tmp/nginx.socket.
 	exec bin/nginx -p . -c config/nginx.conf
 	echo 'nginx-buildpack: NGINX started.'
 	wait
 	echo "at=nginx-server-crash" > $psmgr
 ) &
 
-if read line <$psmgr; then
-        echo $line
+if read l <$psmgr; then
+        echo "psmgr: $l"
         exit 1
 fi
