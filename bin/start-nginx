@@ -16,7 +16,7 @@ erb config/nginx.conf.erb > config/nginx.conf
 	exec tail -qF -n 0 logs/nginx/*.log &
 	echo 'nginx-buildpack: Established log tail.'
 	wait
-	echo 'at=log-tail-crash' > $psmgr
+	echo 'log-tail' > $psmgr
 ) &
 
 #Start App Server
@@ -26,7 +26,7 @@ erb config/nginx.conf.erb > config/nginx.conf
 	exec $@
 	echo "nginx-buildpack: Starting $@"
 	wait
-	echo "at=app-server-crash cmd=$@" > $psmgr
+	echo 'app-server' > $psmgr
 ) &
 #We block on app-initialized so that when NGINX binds to $PORT
 #are app is ready for traffic.
@@ -44,10 +44,9 @@ echo 'nginx-buildpack: App initialized.'
 	exec bin/nginx -p . -c config/nginx.conf &
 	echo 'nginx-buildpack: NGINX started.'
 	wait
-	echo "at=nginx-server-crash" > $psmgr
+	echo 'nginx' > $psmgr
 ) &
 
-if read l <$psmgr; then
-        echo "psmgr: $l"
-        exit 1
-fi
+read l <$psmgr
+echo "at=psmgr-handle-exit cmd=$l"
+exit 1
