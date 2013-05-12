@@ -8,7 +8,7 @@ Some application servers (e.g. Ruby's Unicorn) halt progress when dealing with n
 
 ## Versions
 
-* Buildpack Version: 0.2
+* Buildpack Version: 0.3
 * NGINX Version: 1.4.1
 
 ## Requirements
@@ -69,8 +69,8 @@ Here are 2 setup examples. One example for a new app, another for an existing ap
 Update Buildpacks
 ```bash
 $ heroku config:set BUILDPACK_URL=https://github.com/ddollar/heroku-buildpack-multi.git
-$ echo 'https://github.com/heroku/heroku-buildpack-ruby.git' >> .buildpacks
-$ echo 'https://github.com/ryandotsmith/nginx-buildpack.git#v0.2' >> .buildpacks
+$ echo 'https://codon-buildpacks.s3.amazonaws.com/buildpacks/heroku/ruby.tgz' >> .buildpacks
+$ echo 'https://codon-buildpacks.s3.amazonaws.com/buildpacks/ryandotsmith/nginx-buildpack.tgz' >> .buildpacks
 $ git add .buildpacks
 $ git commit -m 'Add multi-buildpack'
 ```
@@ -148,8 +148,8 @@ web: bin/start-nginx bundle exec unicorn -c config/unicorn.rb
 Create & Push Heroku App:
 ```bash
 $ heroku create --buildpack https://github.com/ddollar/heroku-buildpack-multi.git
-$ echo 'https://github.com/heroku/heroku-buildpack-ruby.git' >> .buildpacks
-$ echo 'https://github.com/ryandotsmith/nginx-buildpack.git#v0.2' >> .buildpacks
+$ echo 'https://codon-buildpacks.s3.amazonaws.com/buildpacks/heroku/ruby.tgz' >> .buildpacks
+$ echo 'https://codon-buildpacks.s3.amazonaws.com/buildpacks/ryandotsmith/nginx-buildpack.tgz' >> .buildpacks
 $ git add .
 $ git commit -am "init"
 $ git push heroku master

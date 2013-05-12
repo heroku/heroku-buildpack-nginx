@@ -1,3 +1,9 @@
+## v0.3
+
+2012-05-11
+
+* Improve process managment using a fifo.
+
 ## v0.2
 
 2012-05-10
