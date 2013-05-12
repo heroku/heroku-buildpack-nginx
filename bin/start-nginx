@@ -53,6 +53,10 @@ echo 'nginx-buildpack: App initialized.'
 #to un-block. The process putting the msg into the fifo
 #will use it's process name as a msg so that we can print the offending
 #process to stdout.
-read l <$psmgr
-echo "at=psmgr-handle-exit cmd=$l"
-exit 1
+while true
+do
+	if read l <$psmgr; then
+		echo "at=psmgr-handle-exit cmd=$l"
+		exit 1
+	fi
+done
