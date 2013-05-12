@@ -16,7 +16,7 @@ erb config/nginx.conf.erb > config/nginx.conf
 	exec tail -qF -n 0 logs/nginx/*.log &
 	echo 'nginx-buildpack: Established log tail.'
 	wait
-	echo 'log-tail' > $psmgr
+	echo 'log' >$psmgr
 ) &
 
 #Start App Server
@@ -26,7 +26,7 @@ erb config/nginx.conf.erb > config/nginx.conf
 	exec $@ &
 	echo "nginx-buildpack: Starting $@"
 	wait
-	echo 'app-server' > $psmgr
+	echo 'app' >$psmgr
 ) &
 #We block on app-initialized so that when NGINX binds to $PORT
 #are app is ready for traffic.
@@ -44,7 +44,7 @@ echo 'nginx-buildpack: App initialized.'
 	exec bin/nginx -p . -c config/nginx.conf &
 	echo 'nginx-buildpack: NGINX started.'
 	wait
-	echo 'nginx' > $psmgr
+	echo 'nginx' >$psmgr
 ) &
 
 #This read will block the process waiting on a msg to be put into the fifo.
@@ -53,10 +53,6 @@ echo 'nginx-buildpack: App initialized.'
 #to un-block. The process putting the msg into the fifo
 #will use it's process name as a msg so that we can print the offending
 #process to stdout.
-while true
-do
-	if read l <$psmgr; then
-		echo "at=psmgr-handle-exit cmd=$l"
-		exit 1
-	fi
-done
+read psmgr_signal <$psmgr
+echo "psmgr exit signal: $psmgr_signal"
+exit 1
