@@ -16,7 +16,7 @@ erb config/nginx.conf.erb > config/nginx.conf
 	exec tail -qF -n 0 logs/nginx/*.log &
 	echo 'buildpack=nginx at=logs-initialized'
 	wait
-	echo 'log' >$psmgr
+	echo 'logs' >$psmgr
 ) &
 
 #Start App Server
@@ -53,6 +53,6 @@ echo 'buildpack=nginx at=app-initialized'
 #to un-block. The process putting the msg into the fifo
 #will use it's process name as a msg so that we can print the offending
 #process to stdout.
-read l<$psmgr
-echo "buildpack=nginx at=exit process=$l"
+read exit_process <$psmgr
+echo "buildpack=nginx at=exit process=$exit_process"
 exit 1
