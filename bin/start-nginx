@@ -14,7 +14,7 @@ erb config/nginx.conf.erb > config/nginx.conf
 	touch logs/nginx/access.log logs/nginx/error.log
 	#Redirect NGINX logs to stdout.
 	exec tail -qF -n 0 logs/nginx/*.log &
-	echo 'nginx-buildpack: Established log tail.'
+	echo 'buildpack=nginx at=logs-initialized'
 	wait
 	echo 'log' >$psmgr
 ) &
@@ -24,7 +24,7 @@ erb config/nginx.conf.erb > config/nginx.conf
 	#Take the command passed to this bin and start it.
 	#E.g. bin/start-nginx bundle exec unicorn -c config/unicorn.rb
 	exec $@ &
-	echo "nginx-buildpack: Starting $@"
+	echo "buildpack=nginx at=start-app cmd=$@"
 	wait
 	echo 'app' >$psmgr
 ) &
@@ -32,17 +32,17 @@ erb config/nginx.conf.erb > config/nginx.conf
 #are app is ready for traffic.
 while [[ ! -f /tmp/app-initialized ]]
 do
-	echo 'nginx-buildpack: Waiting on app initialization...'
+	echo 'buildpack=nginx at=app-initialization'
 	sleep 1
 done
-echo 'nginx-buildpack: App initialized.'
+echo 'buildpack=nginx at=app-initialized'
 
 #Start NGINX
 (
 	#We expect nginx to run in foreground.
 	#We also expect a socket to be at /tmp/nginx.socket.
 	exec bin/nginx -p . -c config/nginx.conf &
-	echo 'nginx-buildpack: NGINX started.'
+	echo 'buildpack=nginx at=nginx-started'
 	wait
 	echo 'nginx' >$psmgr
 ) &
@@ -53,6 +53,6 @@ echo 'nginx-buildpack: App initialized.'
 #to un-block. The process putting the msg into the fifo
 #will use it's process name as a msg so that we can print the offending
 #process to stdout.
-read psmgr_signal <$psmgr
-echo "psmgr exit signal: $psmgr_signal"
+read l<$psmgr
+echo "buildpack=nginx at=exit process=$l"
 exit 1
