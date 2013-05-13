@@ -1,7 +1,10 @@
-worker_processes 1;
 daemon off;
+#Heroku dynos have 4 cores.
+worker_processes 4;
 
 events {
+	use epoll;
+	accept_mutex on;
 	worker_connections 1024;
 }
 
