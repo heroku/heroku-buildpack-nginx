@@ -1,3 +1,12 @@
+## v0.4
+
+2012-05-13
+
+Update NGINX config
+
+* enabled gzip compression
+* using epoll and increasing workers to 4
+
 ## v0.3
 
 2012-05-11
