@@ -8,12 +8,11 @@ mkfifo $psmgr
 erb config/nginx.conf.erb > config/nginx.conf
 
 n=1
-while getopts :wf: option ${@:1:4}
+while getopts :f option ${@:1:2}
 do
         case "${option}"
         in
-                w) WAIT=$OPTIND; n=$((n+1));;
-                f) FILE=$OPTARG; n=$((n+2));;
+                f) FORCE=$OPTIND; n=$((n+1));;
         esac
 done
 
@@ -38,12 +37,9 @@ done
 	echo 'app' >$psmgr
 ) &
 
-if [[ ! -z "$WAIT" ]]
+if [[ -z "$FORCE" ]]
 then
-	if [[ -z "$FILE" ]]
-	then
-		FILE="/tmp/app-initialized"
-	fi
+	FILE="/tmp/app-initialized"
 
 	#We block on app-initialized so that when NGINX binds to $PORT
 	#are app is ready for traffic.
