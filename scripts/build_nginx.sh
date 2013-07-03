@@ -3,8 +3,29 @@
 # Requires 'vulcan' to be installed and a build server created.
 # https://devcenter.heroku.com/articles/buildpack-binaries
 
-cd $(mktemp -d /tmp/vulcan_nginx.XXXXXXXXXX)
-echo $PWD
-curl http://nginx.org/download/nginx-1.4.1.tar.gz | tar zxf -
-(cd nginx-1.4.1 && curl ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.21.tar.bz2 | tar jxf -)
-vulcan build -s nginx-1.4.1 -v -p /tmp/nginx -c './configure --with-pcre=pcre-8.21 --prefix=/tmp/nginx && make install'
+NGINX_VERSION=1.4.1
+PCRE_VERSION=8.21
+NGINX_TARBALL_URL=http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz
+PCRE_TARBALL_URL=ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-${PCRE_VERSION}.tar.bz2
+
+VULCAN_ARCHIVE_RESULT=/tmp/nginx-${NGINX_VERSION}-built-with-vulcan.tar.gz
+
+temp_dir=$(mktemp -d /tmp/vulcan_nginx.XXXXXXXXXX)
+
+cleanup() {
+  echo "Cleaning up $temp_dir"
+  cd /
+  rm -rf "$temp_dir"
+}
+trap cleanup EXIT
+
+cd $temp_dir
+echo "Temp dir: $temp_dir"
+
+echo "Downloading $NGINX_TARBALL_URL"
+curl $NGINX_TARBALL_URL | tar xf -
+
+echo "Downloading $PCRE_TARBALL_URL"
+(cd nginx-${NGINX_VERSION} && curl $PCRE_TARBALL_URL | tar xf -)
+
+vulcan build -o ${VULCAN_ARCHIVE_RESULT} -s nginx-${NGINX_VERSION} -v -p /tmp/nginx -c "./configure --with-pcre=pcre-${PCRE_VERSION} --prefix=/tmp/nginx && make install"
