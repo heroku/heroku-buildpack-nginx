@@ -78,11 +78,7 @@ $ echo 'https://codon-buildpacks.s3.amazonaws.com/buildpacks/heroku/ruby.tgz' >>
 $ git add .buildpacks
 $ git commit -m 'Add multi-buildpack'
 ```
-Update Procfile
-```
-web: bundle exec unicorn -c config/unicorn.rb -p $PORT
-```
-Procfile Becomes:
+Update Procfile:
 ```
 web: bin/start-nginx bundle exec unicorn -c config/unicorn.rb
 ```
@@ -91,10 +87,6 @@ $ git add Procfile
 $ git commit -m 'Update procfile for NGINX buildpack'
 ```
 Update Unicorn Config
-```ruby
-listen ENV['PORT']
-```
-Config Becomes:
 ```ruby
 require 'fileutils'
 listen '/tmp/nginx.socket'
@@ -165,11 +157,7 @@ $ heroku open
 ```
 
 ## License
-
 Copyright (c) 2013 Ryan R. Smith
-
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
