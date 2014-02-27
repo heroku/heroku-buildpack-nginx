@@ -52,9 +52,20 @@ $ cat Procfile
 web: bin/start-nginx bundle exec unicorn -c config/unicorn.rb
 ```
 
+### Setting the Worker Processes
+
+You can configure NGINX's `worker_processes` directive via the
+`NGINX_WORKERS` environment variable.
+
+For example, to set your `NGINX_WORKERS` to 8 on a PX dyno:
+
+```bash
+$ heroku config:set NGINX_WORKERS=8
+```
+
 ### Customizable NGINX Config
 
-You can provide your own NGINX config by creating a file named `nginx.conf.erb` in the config direcotry of your app. Start by copying the buildpack's [default config file](https://github.com/ryandotsmith/nginx-buildpack/blob/master/config/nginx.conf.erb).
+You can provide your own NGINX config by creating a file named `nginx.conf.erb` in the config directory of your app. Start by copying the buildpack's [default config file](https://github.com/ryandotsmith/nginx-buildpack/blob/master/config/nginx.conf.erb).
 
 ### Customizable NGINX Compile Options
 
