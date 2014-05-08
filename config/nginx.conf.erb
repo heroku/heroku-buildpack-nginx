@@ -13,6 +13,8 @@ http {
         gzip_comp_level 2;
         gzip_min_length 512;
 
+	server_tokens off;
+
 	log_format l2met 'measure#nginx.service=$request_time request_id=$http_x_request_id';
 	access_log logs/nginx/access.log l2met;
 	error_log logs/nginx/error.log;
