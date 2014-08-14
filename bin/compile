@@ -3,7 +3,7 @@
 set -e
 
 mkdir -p "$1/bin/"
-cp bin/nginx "$1/bin/"
+cp bin/nginx "$1/bin/nginx"
 nginx_version=$(./bin/nginx -V 2>&1 | head -1 | awk '{ print $NF }')
 echo "-----> nginx-buildpack: Installed ${nginx_version} to app/bin"
 cp bin/start-nginx "$1/bin/"
