@@ -12,5 +12,5 @@ build-cedar-10:
 
 shell:
 	@echo "Opening cedar-14 shell..."
-	@docker run -v $(shell pwd):/buildpack --rm -it -e "STACK=ceder-14" heroku/cedar:14 bash -c 'cd /buildpack; bash'
+	@docker run -v $(shell pwd):/buildpack --rm -it -e "STACK=cedar-14" -e "PORT=5000" heroku/cedar:14 bash -c 'cd /buildpack; bash'
 	@echo ""
