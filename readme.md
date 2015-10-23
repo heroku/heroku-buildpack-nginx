@@ -69,7 +69,15 @@ You can provide your own NGINX config by creating a file named `nginx.conf.erb` 
 
 ### Customizable NGINX Compile Options
 
-See [scripts/build_nginx.sh](scripts/build_nginx.sh) for the build steps. Configuring is as easy as changing the "./configure" options.
+See [scripts/build_nginx](scripts/build_nginx) for the build steps. Configuring is as easy as changing the "./configure" options.
+
+You can run the builds in a [Docker](https://www.docker.com/) container:
+
+```
+$ docker-machine create --driver virtualbox cedar
+$ eval "$(docker-machine env ceder)"
+$ make build # It outputs the latest builds to bin/cedar-*
+```
 
 ### Application/Dyno coordination
 
