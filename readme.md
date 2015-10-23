@@ -8,8 +8,8 @@ Some application servers (e.g. Ruby's Unicorn) halt progress when dealing with n
 
 ## Versions
 
-* Buildpack Version: 0.4
-* NGINX Version: 1.5.7
+* Buildpack Version: 1.0
+* NGINX Version: 1.9.5
 
 ## Requirements
 
@@ -69,7 +69,23 @@ You can provide your own NGINX config by creating a file named `nginx.conf.erb` 
 
 ### Customizable NGINX Compile Options
 
-See [scripts/build_nginx.sh](scripts/build_nginx.sh) for the build steps. Configuring is as easy as changing the "./configure" options.
+See [scripts/build_nginx](scripts/build_nginx) for the build steps. Configuring is as easy as changing the "./configure" options.
+
+You can run the builds in a [Docker](https://www.docker.com/) container:
+
+```
+$ docker-machine create --driver virtualbox cedar
+$ eval "$(docker-machine env ceder)"
+$ make build # It outputs the latest builds to bin/cedar-*
+```
+
+To test the builds:
+
+```
+$ make shell
+$ cp bin/nginx-$STACK bin/nginx
+$ FORCE=1 bin/start-nginx
+```
 
 ### Application/Dyno coordination
 
