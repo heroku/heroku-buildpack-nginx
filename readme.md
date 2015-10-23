@@ -79,6 +79,14 @@ $ eval "$(docker-machine env ceder)"
 $ make build # It outputs the latest builds to bin/cedar-*
 ```
 
+To test the builds:
+
+```
+$ make shell
+$ cp bin/nginx-$STACK bin/nginx
+$ FORCE=1 bin/start-nginx
+```
+
 ### Application/Dyno coordination
 
 The buildpack will not start NGINX until a file has been written to `/tmp/app-initialized`. Since NGINX binds to the dyno's $PORT and since the $PORT determines if the app can receive traffic, you can delay NGINX accepting traffic until your application is ready to handle it. The examples below show how/when you should write the file when working with Unicorn.
