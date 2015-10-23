@@ -44,8 +44,4 @@ echo "Downloading $headers_more_nginx_module_url"
 	make install
 )
 
-while true
-do
-	sleep 1
-	echo "."
-done
+cp /tmp/nginx/sbin/nginx $1
