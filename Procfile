@@ -1,1 +1,1 @@
-web: echo "NOOP"
+web: scripts/build_nginx.sh
