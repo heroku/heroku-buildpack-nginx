@@ -1,1 +1,1 @@
-web: ./scripts/build_nginx /tmp
+web: ./scripts/build_nginx
