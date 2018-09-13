@@ -5,6 +5,8 @@
 Update NGINX config
 
 * add support for Heroku-18, running nginx 1.14 (stable version)
+* update "headers-more-nginx" module to 0.33
+* update PCRE dependency to 8.42
 * update compile flags to include `--with-http_realip_module`
 * update compile flags to include `--with-http_gzip_static_module` and compile with zlib support
 
