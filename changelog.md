@@ -1,39 +1,38 @@
-## v1.1
+# Changelog
+All notable changes to this project will be documented in this file.
 
-2018-09-13
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-Update NGINX config
+## [1.1.0] - 2018-09-13
+### Added
+- [heroku-18] support new Heroku stack (heroku-18)
+- [all] Real IP support, adding compile flag `--with-http_realip_module`
+- [all] Static GZIP support, adding compile flag `--with-http_gzip_static_module`
+- [all] compile with zlib support
 
-* add support for Heroku-18, running nginx 1.14 (stable version)
-* update "headers-more-nginx" module to 0.33
-* update PCRE dependency to 8.42
-* update compile flags to include `--with-http_realip_module`
-* update compile flags to include `--with-http_gzip_static_module` and compile with zlib support
+### Changed
+- [heroku-18] PCRE updated from 8.37 to 8.42
+- [heroku-18] "headers-more-nginx" module updated from 0.261 to 0.33
+- [heroku-18] PCRE updated from 8.37 to 8.42
 
-## v0.4
 
-2012-05-13
+## [0.4] - 2012-05-13
+### Added
+- [all] enabled gzip compression
 
-Update NGINX config
+### Changed
+- [all] include most recent nginx config
+- [all] using epoll and increasing workers to 4
 
-* enabled gzip compression
-* using epoll and increasing workers to 4
+## [0.3] - 2012-05-11
+### Changed
+- [all] Improve process managment using a fifo.
 
-## v0.3
+## [0.2] - 2012-05-10
+### Changed
+- [all] Improve the handling of app server failures
 
-2012-05-11
-
-* Improve process managment using a fifo.
-
-## v0.2
-
-2012-05-10
-
-* Improve the handling of app server failures
-
-## v0.1
-
-2012-05-09
-
-* NGINX 1.4.1
-* inital release
+## [0.1] - 2012-05-09
+### Added
+- [all] initial release with NGINX 1.4.1
