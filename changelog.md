@@ -1,3 +1,13 @@
+## v1.1
+
+2018-09-13
+
+Update NGINX config
+
+* add support for Heroku-18, running nginx 1.14 (stable version)
+* update compile flags to include `--with-http_realip_module`
+* update compile flags to include `--with-http_gzip_static_module` and compile with zlib support
+
 ## v0.4
 
 2012-05-13
