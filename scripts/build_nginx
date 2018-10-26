@@ -47,6 +47,7 @@ echo "Downloading $zlib_url"
     --with-zlib=zlib-${ZLIB_VERSION} \
     --with-http_gzip_static_module \
     --with-http_realip_module \
+    --with-http_ssl_module \
     --prefix=/tmp/nginx \
     --add-module=${temp_dir}/nginx-${NGINX_VERSION}/headers-more-nginx-module-${HEADERS_MORE_VERSION}
   make install
