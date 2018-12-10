@@ -1,199 +1,85 @@
 # Heroku Buildpack: NGINX
 
-Nginx-buildpack vendors NGINX inside a dyno and connects NGINX to an app server via UNIX domain sockets.
+# NOTICE: FORKED REPO - THE FOLLOWING DESCRIBES OUR CHANGES
 
-## Motivation
+ATK had previously forked a different [nginx repo](https://github.com/Americastestkitchen/nginx-buildpack). We have switched to this repo so that we can deploy on heroku-18 stack.
 
-Some application servers (e.g. Ruby's Unicorn) halt progress when dealing with network I/O. Heroku's Cedar routing stack [buffers only the headers](https://devcenter.heroku.com/articles/http-routing#request-buffering) of inbound requests. (The Cedar router will buffer the headers and body of a response up to 1MB) Thus, the Heroku router engages the dyno during the entire body transfer –from the client to dyno. For applications servers with blocking I/O, the latency per request will be degraded by the content transfer. By using NGINX in front of the application server, we can eliminate a great deal of transfer time from the application server. In addition to making request body transfers more efficient, all other I/O should be improved since the application server need only communicate with a UNIX socket on localhost. Basically, for webservers that are not designed for efficient, non-blocking I/O, we will benefit from having NGINX to handle all I/O operations.
+Our version of nginx includes a couple extra plugins (lua, geo) that required a new nginx binary. We run this binary in what this repo calls the `solo` mode but to keep our `kraken` scripts the same, we use the `start-nginx`.
 
-## Versions
+## [Read the Original README](https://github.com/Americastestkitchen/heroku-buildpack-nginx)
 
-* Buildpack Version: 1.1
-* NGINX Version: 1.9.5
+# README CONTENTS FROM FORKED REPO (STILL RELEVANT HERE)
 
-## Requirements (Proxy Mode)
+## Creating a new build
 
-* Your webserver listens to the socket at `/tmp/nginx.socket`.
-* You touch `/tmp/app-initialized` when you are ready for traffic.
-* You can start your web server with a shell command.
+When this buildpack deploys on Heroku, the binary file corresponding to the currently configured stack (bin/nginx-heroku-18) is used. Rebuilding this binary can be done using the `scripts/build_nginx.sh` script. The script must be executed on a server that resembles the heroku stack as closely as possible. The steps below were used to create the latest build.
 
-## Requirements (Solo Mode)
+### Change the build file
+If you are interested in creating a new build, you will need to modify the `scripts/build_nginx.sh` file.
+1) Create a branch
+2) Make your changes
+3) Create the new build (see below)
+4) Validate your build works on www-dev or www-staging (see below)
+5) Open a PR
+6) Merge PR
 
-* Add a custom nginx config to your app source code at `config/nginx.conf.erb`. You can start by copying the [sample config for nginx solo mode](config/nginx-solo-sample.conf.erb).
+### Create a VM
+1) Heroku describes their stacks in the [Stacks](https://devcenter.heroku.com/articles/stack) article, including the version of Linux required for each stack.
+2) Go to the [Download Page for Ubuntu 18.04](http://releases.ubuntu.com/14.04/)
+3) Download the [64-bit PC (AMD64) server install image](http://releases.ubuntu.com/18.04/) `.iso` file.
+4) Using Virtual Machine, create a new Ubuntu Linux VM, allocating at least 10GB of space to a virtual HDD
+5) Start the Virtual Machine - you will be asked to select a 'CD' - choose the `.iso` file you downloaded in step 3.
+6) Complete the installation process for Ubuntu Server. This will take a while.
 
-## Features
+### Configure the VM
+After you complete the install process, you will have a basic server. You will need to install the dependencies required for building nginx.
 
-* Unified NXNG/App Server logs.
-* [L2met](https://github.com/ryandotsmith/l2met) friendly NGINX log format.
-* [Heroku request ids](https://devcenter.heroku.com/articles/http-request-id) embedded in NGINX logs.
-* Crashes dyno if NGINX or App server crashes. Safety first.
-* Language/App Server agnostic.
-* Customizable NGINX config.
-* Application coordinated dyno starts.
+Ubuntu uses `apt-get` for most software installations. The following commands (and probably a few more that I forgot to document...sorry!) were required to successfully build nginx. These commands assume you are running as `root`,
 
-### Logging
-
-NGINX will output the following style of logs:
-
-```
-measure.nginx.service=0.007 request_id=e2c79e86b3260b9c703756ec93f8a66d
-```
-
-You can correlate this id with your Heroku router logs:
-
-```
-at=info method=GET path=/ host=salty-earth-7125.herokuapp.com request_id=e2c79e86b3260b9c703756ec93f8a66d fwd="67.180.77.184" dyno=web.1 connect=1ms service=8ms status=200 bytes=21
-```
-
-### Language/App Server Agnostic
-
-nginx-buildpack provides a command named `bin/start-nginx` this command takes another command as an argument. You must pass your app server's startup command to `start-nginx`.
-
-For example, to get NGINX and Unicorn up and running:
+# *NOTE*: All of these packages correlate to what is specified in the build script. If you are rebuilding because you are updating nginx to a newer version or compiling for a new version of Ubuntu, YMMV. If you change the versions of the software check the README for the various nginx modules. There are some good hints in there regarding compatibility for different scenarios.
 
 ```bash
-$ cat Procfile
-web: bin/start-nginx bundle exec unicorn -c config/unicorn.rb
+$ apt-get install git
+$ apt-get install build-essential libpcre3 libpcre3-dev
+$ apt-get install openssl libssl-dev libssl0.9.8 ca-certificates
+$ apt-get install lua5.1 liblua5.1.0 liblua5.1.0-dev
+$ ln -s /usr/lib/x86_64-linux-gnu/liblua5.1.so /usr/lib/liblua.so
+$ apt-get install libgeoip-dev
+$ apt-get install make
 ```
 
-### nginx Solo Mode
-
-nginx-buildpack provides a command named `bin/start-nginx-solo`. This is for you if you don't want to run an additional app server on the Dyno.
-This mode requires you to put a `config/nginx.conf.erb` in your app code. You can start by coping the [sample config for nginx solo mode](config/nginx-solo-sample.conf.erb).
-For example, to get NGINX and Unicorn up and running:
+### Build nginx
+```bash
+$ cd ~
+$ mkdir src
+$ cd src
+$ git clone https://github.com/Americastestkitchen/nginx-buildpack.git
+$ cd nginx-buildpack
+< make desired changes to scripts/build_nginx>
+$ scripts/build_nginx.sh
+```
+The above command will create a new binary file at `/tmp/nginx/sbin/nginx`. Copy this file to your `bin` directory in your `nginx-buildback` directory.
 
 ```bash
-$ cat Procfile
-web: bin/start-nginx-solo
+$ cp /tmp/nginx/sbin/nginx ~/src/nginx-buildpack/bin/nginx-cedar-14
 ```
 
-### Setting the Worker Processes
+*NOTE* If you are changing heroku stacks, you will need to name the file based on the name of the heroku stack.
 
-You can configure NGINX's `worker_processes` directive via the
-`NGINX_WORKERS` environment variable.
+### Test Your New nginx
+1) In the Heroku dashboard, open `atk-kraken-dev`
+2) In the Settings tab, delete the current buildpack
+3) Create a new buildpack, `https://github.com/Americastestkitchen/nginx-buildpack.git#<your-branch-name-here>`
+4) In the Deploy tab, deploy `master` or your current working branch
+5) Test your new build, monitoring the logs for errors
 
-For example, to set your `NGINX_WORKERS` to 8 on a PX dyno:
+### Deploy your working branch to production
+Make absolutely sure your new build works. `kraken` sits in front of *everything*. So, if you screw it up, the whole site will be affected.
 
-```bash
-$ heroku config:set NGINX_WORKERS=8
-```
+1) In the Heroku dashboard, open `atk-kraken-production`
+2) In the Settings tab, delete the buildpack
+3) Create a new buildpack, `https://github.com/Americastestkitchen/nginx-buildpack.git#<your-branch-name-here>`
+4) In the Deploy tab, deploy `master` (or your `kraken` release branch)
+5) Monitor the logs like a hawk
 
-### Customizable NGINX Config
-
-You can provide your own NGINX config by creating a file named `nginx.conf.erb` in the config directory of your app. Start by copying the buildpack's [default config file](config/nginx.conf.erb).
-
-### Customizable NGINX Compile Options
-
-See [scripts/build_nginx](scripts/build_nginx) for the build steps. Configuring is as easy as changing the "./configure" options.
-
-You can run the builds in a [Docker](https://www.docker.com/) container:
-
-```
-$ make build # It outputs the latest builds to bin/cedar-*
-```
-
-To test the builds:
-
-```
-$ make shell
-$ cp bin/nginx-$STACK bin/nginx
-$ FORCE=1 bin/start-nginx
-```
-
-### Application/Dyno coordination
-
-The buildpack will not start NGINX until a file has been written to `/tmp/app-initialized`. Since NGINX binds to the dyno's $PORT and since the $PORT determines if the app can receive traffic, you can delay NGINX accepting traffic until your application is ready to handle it. The examples below show how/when you should write the file when working with Unicorn.
-
-## Setup
-
-Here are 2 setup examples. One example for a new app, another for an existing app. In both cases, we are working with ruby & unicorn. Keep in mind that this buildpack is not ruby specific.
-
-### Existing App
-
-Update Buildpacks
-```bash
-$ heroku buildpacks:add https://github.com/heroku/heroku-buildpack-nginx
-```
-Update Procfile:
-```
-web: bin/start-nginx bundle exec unicorn -c config/unicorn.rb
-```
-```bash
-$ git add Procfile
-$ git commit -m 'Update procfile for NGINX buildpack'
-```
-Update Unicorn Config
-```ruby
-require 'fileutils'
-listen '/tmp/nginx.socket'
-before_fork do |server,worker|
-	FileUtils.touch('/tmp/app-initialized')
-end
-```
-```bash
-$ git add config/unicorn.rb
-$ git commit -m 'Update unicorn config to listen on NGINX socket.'
-```
-Deploy Changes
-```bash
-$ git push heroku master
-```
-
-### New App
-
-```bash
-$ mkdir myapp; cd myapp
-$ git init
-```
-
-**Gemfile**
-```ruby
-source 'https://rubygems.org'
-gem 'unicorn'
-```
-
-**config.ru**
-```ruby
-run Proc.new {[200,{'Content-Type' => 'text/plain'}, ["hello world"]]}
-```
-
-**config/unicorn.rb**
-```ruby
-require 'fileutils'
-preload_app true
-timeout 5
-worker_processes 4
-listen '/tmp/nginx.socket', backlog: 1024
-
-before_fork do |server,worker|
-	FileUtils.touch('/tmp/app-initialized')
-end
-```
-Install Gems
-```bash
-$ bundle install
-```
-Create Procfile
-```
-web: bin/start-nginx bundle exec unicorn -c config/unicorn.rb
-```
-Create & Push Heroku App:
-```bash
-$ heroku create
-$ heroku buildpacks:add heroku/ruby
-$ heroku buildpacks:add https://github.com/heroku/heroku-buildpack-nginx
-$ git add .
-$ git commit -am "init"
-$ git push heroku master
-$ heroku logs -t
-```
-Visit App
-```
-$ heroku open
-```
-
-## License
-Copyright (c) 2013 Ryan R. Smith
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+After the dust has settled and you are confident nginx is stable, you can merge your working branch to master. Then, change `atk-kraken-dev` and `atk-kraken-production` buildpack back to `https://github.com/Americastestkitchen/nginx-buildpack.git`. The change will go into effect the next time you deploy `kraken`.
