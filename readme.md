@@ -110,10 +110,12 @@ Here are 2 setup examples. One example for a new app, another for an existing ap
 
 ### Existing App
 
-Update Buildpacks
+Update Buildpacks to use the latest stable version of this buildpack:
 ```bash
-$ heroku buildpacks:add https://github.com/heroku/heroku-buildpack-nginx
+$ heroku buildpacks:add heroku-community/nginx
 ```
+Alternatively, you can use the Github URL of this repo if you want to edge version.
+
 Update Procfile:
 ```
 web: bin/start-nginx bundle exec unicorn -c config/unicorn.rb
