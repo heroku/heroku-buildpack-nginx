@@ -67,7 +67,7 @@ $ cat Procfile
 web: bin/start-nginx-solo
 ```
 
-### Setting the Worker Processes
+### Setting the Worker Processes and Connections
 
 You can configure NGINX's `worker_processes` directive via the
 `NGINX_WORKERS` environment variable.
@@ -76,6 +76,12 @@ For example, to set your `NGINX_WORKERS` to 8 on a PX dyno:
 
 ```bash
 $ heroku config:set NGINX_WORKERS=8
+```
+
+Similarly, the `NGINX_WORKER_CONNECTIONS` environment variable can configure the `worker_connections` directive:
+
+```bash
+$ heroku config:set NGINX_WORKER_CONNECTIONS=2048
 ```
 
 ### Customizable NGINX Config
