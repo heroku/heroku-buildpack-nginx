@@ -44,6 +44,14 @@ You can correlate this id with your Heroku router logs:
 ```
 at=info method=GET path=/ host=salty-earth-7125.herokuapp.com request_id=e2c79e86b3260b9c703756ec93f8a66d fwd="67.180.77.184" dyno=web.1 connect=1ms service=8ms status=200 bytes=21
 ```
+#### Setting custom log paths
+
+You can configure custom log paths using the environment variables `NGINX_ACCESS_LOG_PATH` and `NGINX_ERROR_LOG_PATH`.
+
+For example, if you wanted to stop nginx from logging your access logs you could set `NGINX_ACCESS_LOG_PATH` to `/dev/null`:
+```bash
+$ heroku config:set NGINX_ACCESS_LOG_PATH="/dev/null"
+```
 
 ### Language/App Server Agnostic
 
