@@ -40,7 +40,7 @@ echo 'buildpack=nginx at=logs-initialized'
 
 if [[ -z "$FORCE" ]]
 then
-  FILE="/tmp/app-initialized"
+  FILE="/tmp/nginx.socket"
 
   # We block on app-initialized so that when nginx binds to $PORT
   # are app is ready for traffic.
