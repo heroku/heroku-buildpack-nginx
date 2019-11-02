@@ -1,0 +1,7 @@
+#!/bin/bash
+
+apt update
+apt --yes install golang
+go get -v github.com/vouch/vouch-proxy
+go build github.com/vouch/vouch-proxy
+mv vouch-proxy $1

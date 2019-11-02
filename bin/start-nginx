@@ -6,6 +6,10 @@ mkfifo $psmgr
 
 # Evaluate config to get $PORT
 erb config/nginx.conf.erb > config/nginx.conf
+erb config/config.yml.erb > config/config.yml
+
+# Create token cache for vouch-proxy
+mkdir -p data/
 
 n=1
 while getopts :f option ${@:1:2}
@@ -26,6 +30,12 @@ echo 'buildpack=nginx at=logs-initialized'
   # Redirect nginx logs to stdout.
   tail -qF -n 0 logs/nginx/*.log
   echo 'logs' >$psmgr
+) &
+
+# Start Vouch Proxy
+(
+  echo "buildpack=nginx at=start-vouch-proxy"
+  bin/vouch-proxy
 ) &
 
 # Start App Server
