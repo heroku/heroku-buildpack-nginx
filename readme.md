@@ -1,3 +1,11 @@
+# Information
+
+This repository was forked from [Heroku buildpack nginx](https://github.com/heroku/heroku-buildpack-nginx) to add support for the following:
+
+- More recent version of dependencies and nginx
+- Being compiled with http_auth_request_module
+- Having Naxsi security module being loaded
+
 # Heroku Buildpack: NGINX
 
 Nginx-buildpack vendors NGINX inside a dyno and connects NGINX to an app server via UNIX domain sockets.
