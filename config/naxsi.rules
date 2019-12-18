@@ -1,0 +1,9 @@
+SecRulesEnabled;
+DeniedUrl "/error/500";
+
+## Check for all the rules
+CheckRule "$SQL >= 8" BLOCK;
+CheckRule "$RFI >= 8" BLOCK;
+CheckRule "$TRAVERSAL >= 4" BLOCK;
+CheckRule "$EVADE >= 4" BLOCK;
+CheckRule "$XSS >= 8" BLOCK;
