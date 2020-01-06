@@ -4,9 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3] - 2020-03-06
+ ### Added
+ - [heroku-18] update nginx to 1.16.1
+
 ## [1.2] - 2019-05-29
  ### Added
- - [heroku-18] update nginx to 1.17.0
+ - [heroku-18] update nginx to 1.16.0
  - add uuid4 module from https://github.com/cybozu/nginx-uuid4-module
  - add nginx solo support, see [sample config for nginx solo mode](config/nginx-solo.conf.erb) and [README](README.md)
 
