@@ -14,12 +14,14 @@ PCRE_VERSION=${PCRE_VERSION-8.37}
 HEADERS_MORE_VERSION=${HEADERS_MORE_VERSION-0.261}
 ZLIB_VERSION=${ZLIB_VERSION-1.2.11}
 UUID4_VERSION=${UUID4_VERSION-master}
+HTTP_SUBSTITUTION_FILTER_VERSION=${0.6.4}
 
 nginx_tarball_url=https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz
 pcre_tarball_url=https://ftp.pcre.org/pub/pcre/pcre-${PCRE_VERSION}.tar.gz
 headers_more_nginx_module_url=https://github.com/openresty/headers-more-nginx-module/archive/v${HEADERS_MORE_VERSION}.tar.gz
 uuid4_url=https://github.com/cybozu/nginx-uuid4-module/archive/${UUID4_VERSION}.tar.gz
 zlib_url=http://zlib.net/zlib-${ZLIB_VERSION}.tar.gz
+nginx_substitutions_filter_url=https://github.com/yaoweibin/ngx_http_substitutions_filter_module/archive/v${HTTP_SUBSTITUTION_FILTER_VERSION}.tar.gz
 
 temp_dir=$(mktemp -d /tmp/nginx.XXXXXXXXXX)
 
@@ -41,6 +43,9 @@ echo "Downloading $zlib_url"
 echo "Downloading $uuid4_url"
 (cd nginx-${NGINX_VERSION} && curl -L $uuid4_url | tar xvz )
 
+echo "Downloading $nginx_substitutions_filter"
+(cd nginx-${NGINX_VERSION} && curl -L $nginx_substitutions_filter_url | tar xvz )
+
 (
   cd nginx-${NGINX_VERSION}
   ./configure \
@@ -51,7 +56,8 @@ echo "Downloading $uuid4_url"
     --with-http_ssl_module \
     --prefix=/tmp/nginx \
     --add-module=${temp_dir}/nginx-${NGINX_VERSION}/headers-more-nginx-module-${HEADERS_MORE_VERSION} \
-    --add-module=${temp_dir}/nginx-${NGINX_VERSION}/nginx-uuid4-module-${UUID4_VERSION}
+    --add-module=${temp_dir}/nginx-${NGINX_VERSION}/nginx-uuid4-module-${UUID4_VERSION} \
+    --add-module=${temp_dir}/nginx-${NGINX_VERSION}/ngx_http_substitutions_filter_module-${HTTP_SUBSTITUTION_FILTER_VERSION}
   make install
 )
 
