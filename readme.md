@@ -68,6 +68,12 @@ $ cat Procfile
 web: bin/start-nginx bundle exec unicorn -c config/unicorn.rb
 ```
 
+#### nginx debug mode
+```bash
+$ cat Procfile
+web: bin/start-nginx-debug bundle exec unicorn -c config/unicorn.rb
+```
+
 ### nginx Solo Mode
 
 nginx-buildpack provides a command named `bin/start-nginx-solo`. This is for you if you don't want to run an additional app server on the Dyno.

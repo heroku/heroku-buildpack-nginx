@@ -4,7 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.3] - 2020-03-06
+## [1.4] - 2020-03-06
+ ### Added
+ - [heroku-18] update PCRE to 8.44
+ - [all] add nginx-debug binary
+
+## [1.3] - 2020-01-06
  ### Added
  - [heroku-18] update nginx to 1.16.1
 
