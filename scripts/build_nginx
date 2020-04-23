@@ -14,12 +14,14 @@ PCRE_VERSION=${PCRE_VERSION-8.37}
 HEADERS_MORE_VERSION=${HEADERS_MORE_VERSION-0.261}
 ZLIB_VERSION=${ZLIB_VERSION-1.2.11}
 UUID4_VERSION=${UUID4_VERSION-master}
+RTMP_MODULE_VERSION=1.2.1
 
 nginx_tarball_url=https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz
 pcre_tarball_url=https://ftp.pcre.org/pub/pcre/pcre-${PCRE_VERSION}.tar.gz
 headers_more_nginx_module_url=https://github.com/openresty/headers-more-nginx-module/archive/v${HEADERS_MORE_VERSION}.tar.gz
 uuid4_url=https://github.com/cybozu/nginx-uuid4-module/archive/${UUID4_VERSION}.tar.gz
 zlib_url=http://zlib.net/zlib-${ZLIB_VERSION}.tar.gz
+rtmp_module_url=https://github.com/arut/nginx-rtmp-module/archive/v${RTMP_MODULE_VERSION}.tar.gz
 
 temp_dir=$(mktemp -d /tmp/nginx.XXXXXXXXXX)
 
@@ -34,6 +36,9 @@ echo "Downloading $pcre_tarball_url"
 
 echo "Downloading $headers_more_nginx_module_url"
 (cd nginx-${NGINX_VERSION} && curl -L $headers_more_nginx_module_url | tar xvz )
+
+echo "Downloading $rtmp_module_url"
+(cd nginx-${NGINX_VERSION} && curl -L $rtmp_module_url | tar xvz )
 
 echo "Downloading $zlib_url"
 (cd nginx-${NGINX_VERSION} && curl -L $zlib_url | tar xvz )
@@ -50,6 +55,7 @@ echo "Downloading $uuid4_url"
     --with-http_realip_module \
     --with-http_ssl_module \
     --prefix=/tmp/nginx \
+    --add-module=${temp_dir}/nginx-${NGINX_VERSION}/nginx-rtmp-module-${RTMP_MODULE_VERSION} \
     --add-module=${temp_dir}/nginx-${NGINX_VERSION}/headers-more-nginx-module-${HEADERS_MORE_VERSION} \
     --add-module=${temp_dir}/nginx-${NGINX_VERSION}/nginx-uuid4-module-${UUID4_VERSION}
   make install
