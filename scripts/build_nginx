@@ -9,9 +9,9 @@
 # Once the dyno has is 'up' you can open your browser and navigate
 # this dyno's directory structure to download the nginx binary.
 
-NGINX_VERSION=${NGINX_VERSION-1.9.5}
-PCRE_VERSION=${PCRE_VERSION-8.37}
-HEADERS_MORE_VERSION=${HEADERS_MORE_VERSION-0.261}
+NGINX_VERSION=${NGINX_VERSION-1.16.1}
+PCRE_VERSION=${PCRE_VERSION-8.44}
+HEADERS_MORE_VERSION=${HEADERS_MORE_VERSION-0.33}
 ZLIB_VERSION=${ZLIB_VERSION-1.2.11}
 UUID4_VERSION=${UUID4_VERSION-master}
 
@@ -55,4 +55,20 @@ echo "Downloading $uuid4_url"
   make install
 )
 
+(
+  cd nginx-${NGINX_VERSION}
+  ./configure \
+    --with-debug \
+    --with-pcre=pcre-${PCRE_VERSION} \
+    --with-zlib=zlib-${ZLIB_VERSION} \
+    --with-http_gzip_static_module \
+    --with-http_realip_module \
+    --with-http_ssl_module \
+    --prefix=/tmp/nginx-debug \
+    --add-module=${temp_dir}/nginx-${NGINX_VERSION}/headers-more-nginx-module-${HEADERS_MORE_VERSION} \
+    --add-module=${temp_dir}/nginx-${NGINX_VERSION}/nginx-uuid4-module-${UUID4_VERSION}
+  make install
+)
+
 cp /tmp/nginx/sbin/nginx $1
+cp /tmp/nginx-debug/sbin/nginx $2
