@@ -5,22 +5,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [unreleased] - 2020-05-05
- ### Added
- - [all] add nginx-debug binary
+### Added
+- [all] add nginx-debug binary
 
- ### Changed
- - [heroku-18] update nginx to 1.18
- - [heroku-18] update PCRE to 8.44
+### Changed
+- [heroku-18] update nginx to 1.18
+- [heroku-18] update PCRE to 8.44
 
 ## [1.3] - 2020-01-06
- ### Added
- - [heroku-18] update nginx to 1.16.1
+### Added
+- [heroku-18] update nginx to 1.16.1
 
 ## [1.2] - 2019-05-29
- ### Added
- - [heroku-18] update nginx to 1.16.0
- - add uuid4 module from https://github.com/cybozu/nginx-uuid4-module
- - add nginx solo support, see [sample config for nginx solo mode](config/nginx-solo.conf.erb) and [README](README.md)
+### Added
+- [heroku-18] update nginx to 1.16.0
+- add uuid4 module from https://github.com/cybozu/nginx-uuid4-module
+- add nginx solo support, see [sample config for nginx solo mode](config/nginx-solo.conf.erb) and [README](README.md)
 
 ## [1.1.0] - 2018-09-13
 ### Added
