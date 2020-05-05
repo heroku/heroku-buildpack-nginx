@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [unreleased] - 2020-05-05
 ### Added
 - [all] add nginx-debug binary
+- [heroku-20] add support for Heroku-20
 
 ### Changed
 - [heroku-18] update nginx to 1.18
