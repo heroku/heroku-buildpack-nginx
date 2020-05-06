@@ -54,6 +54,14 @@ fi
 
 # Start nginx
 (
+  #Test config before actually launching nginx
+  echo 'buildpack=nginx at=nginx-test-config'
+  bin/nginx-debug -t -c config/nginx.conf
+  if [[ $? -ne 0 ]]; then
+    echo 'nginx-test-config' >$psmgr;
+    exit 1
+  fi
+
   # We expect nginx to run in foreground.
   # We also expect a socket to be at /tmp/nginx.socket.
   echo 'buildpack=nginx at=nginx-start'
