@@ -41,6 +41,24 @@ echo "Downloading $zlib_url"
 echo "Downloading $uuid4_url"
 (cd nginx-${NGINX_VERSION} && curl -L $uuid4_url | tar xvz )
 
+if [[ -f "$ENV_DIR/NGINX_SIGTERM_PATCH" ]]; then
+  echo "Patching NGINX so that SIGTERM triggers graceful shutdown"
+  if [ -d "/buildpack/support/patchfiles/sigterm/${NGINX_VERSION}" ]
+  then
+      PATCHFILES=$(find /buildpack/support/patchfiles/sigterm/${NGINX_VERSION} -name '*.patch')
+  else
+      PATCHFILES=$(find /buildpack/support/patchfiles/sigterm/default -name '*.patch')
+  fi
+
+  (
+    cd nginx-${NGINX_VERSION}
+    for f in $PATCHFILES
+    do
+      patch -p0 < $f
+    done
+  )
+fi
+
 (
   cd nginx-${NGINX_VERSION}
   ./configure \
