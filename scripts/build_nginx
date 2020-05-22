@@ -43,9 +43,9 @@ echo "Downloading $uuid4_url"
 
 if [ -d "/buildpack/support/patchfiles/${NGINX_VERSION}" ]
 then
-    PATCHFILES=$(find /buildpack/support/patchfiles/${NGINX_VERSION} -name '*.patch')
+    PATCHFILES=$(find /buildpack/scripts/patchfiles/${NGINX_VERSION} -name '*.patch')
 else
-    PATCHFILES=$(find /buildpack/support/patchfiles/default -name '*.patch')
+    PATCHFILES=$(find /buildpack/scripts/patchfiles/default -name '*.patch')
 fi
 
 
@@ -62,6 +62,7 @@ fi
 )
 
 (
+  cd nginx-${NGINX_VERSION}
   ./configure \
     --with-pcre=pcre-${PCRE_VERSION} \
     --with-zlib=zlib-${ZLIB_VERSION} \
@@ -75,6 +76,7 @@ fi
 )
 
 (
+  cd nginx-${NGINX_VERSION}
   ./configure \
     --with-debug \
     --with-pcre=pcre-${PCRE_VERSION} \
