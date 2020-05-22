@@ -48,10 +48,15 @@ else
     PATCHFILES=$(find /buildpack/support/patchfiles/default -name '*.patch')
 fi
 
+
+# NGX_SHUTDOWN_SIGNAL=TERM
+# NGX_TERMINATE_SIGNAL=QUIT
+
 (
   cd nginx-${NGINX_VERSION}
   for f in $PATCHFILES
   do
+    echo "patch: $f"
     patch -p0 < $f
   done
 )
