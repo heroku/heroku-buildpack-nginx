@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## unreleased
 ### Added
 - [all] move to tgz to distribute binaries
-- [akk] update mime.types to reflect the version that is included in the nginx distrubition
+- [all] update mime.types to reflect the version that is included in the nginx distrubition
 
 ## [1.4] - 2020-05-05
 ### Added
