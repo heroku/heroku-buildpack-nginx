@@ -21,7 +21,7 @@ echo '-----> nginx-buildpack: Added start-nginx-solo to app/bin'
 mkdir -p "$1/config"
 
 if [[ ! -f $1/config/mime.types ]]; then
-	cp config/mime.types "$1/config/"
+	cp "$BUILD_DIR/nginx/mime.types" "$1/config/"
 	echo '-----> nginx-buildpack: Default mime.types copied to app/config/'
 else
 	echo '-----> nginx-buildpack: Custom mime.types found in app/config.'
