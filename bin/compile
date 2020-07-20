@@ -2,31 +2,47 @@
 
 set -e
 
-mkdir -p "$1/bin/"
-cp "bin/nginx-$STACK" "$1/bin/nginx"
-cp "bin/nginx-debug-$STACK" "$1/bin/nginx-debug"
-nginx_version=$(./bin/nginx-$STACK -V 2>&1 | head -1 | awk '{ print $NF }')
+# clean up leaking environment
+unset GIT_DIR
+
+# parse and derive params
+BUILD_DIR=$1
+CACHE_DIR=$2
+BUILDPACK_DIR="$(dirname "$(dirname "$0")")"
+
+mkdir -p "$BUILD_DIR/bin/"
+mkdir -p "$BUILD_DIR/nginx"
+tar -zxvf "nginx-$STACK".tgz -C "$BUILD_DIR/nginx"
+
+cp "$BUILD_DIR/nginx/nginx" "$BUILD_DIR/bin/nginx"
+cp "$BUILD_DIR/nginx/nginx-debug" "$BUILD_DIR/bin/nginx-debug"
+
+nginx_version=$($BUILD_DIR/bin/nginx -V 2>&1 | head -1 | awk '{ print $NF }')
 echo "-----> nginx-buildpack: Installed ${nginx_version} to app/bin"
-cp bin/start-nginx "$1/bin/"
+cp bin/start-nginx "$BUILD_DIR/bin/"
 echo '-----> nginx-buildpack: Added start-nginx to app/bin'
-cp bin/start-nginx-debug "$1/bin/"
+cp bin/start-nginx-debug "$BUILD_DIR/bin/"
 echo '-----> nginx-buildpack: Added start-nginx-debug to app/bin'
-cp bin/start-nginx-solo "$1/bin/"
+cp bin/start-nginx-solo "$BUILD_DIR/bin/"
 echo '-----> nginx-buildpack: Added start-nginx-solo to app/bin'
 
-mkdir -p "$1/config"
+mkdir -p "$BUILD_DIR/config"
 
-if [[ ! -f $1/config/mime.types ]]; then
-	cp config/mime.types "$1/config/"
+if [[ ! -f $BUILD_DIR/config/mime.types ]]; then
+	cp "$BUILD_DIR/nginx/mime.types" "$BUILD_DIR/config/"
 	echo '-----> nginx-buildpack: Default mime.types copied to app/config/'
 else
 	echo '-----> nginx-buildpack: Custom mime.types found in app/config.'
 fi
 
-if [[ ! -f $1/config/nginx.conf.erb ]]; then
-	cp config/nginx.conf.erb "$1/config/"
+if [[ ! -f $BUILD_DIR/config/nginx.conf.erb ]]; then
+	cp config/nginx.conf.erb "$BUILD_DIR/config/"
 	echo '-----> nginx-buildpack: Default config copied to app/config.'
 else
 	echo '-----> nginx-buildpack: Custom config found in app/config.'
 fi
+
+# cleanup
+rm -r "$BUILD_DIR/nginx"
+
 exit 0
