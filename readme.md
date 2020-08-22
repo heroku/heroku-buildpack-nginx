@@ -110,15 +110,25 @@ You can provide your own NGINX config by creating a file named `nginx.conf.erb` 
 
 ### Customizable NGINX Compile Options
 
-See [scripts/build_nginx](scripts/build_nginx) for the build steps. Configuring is as easy as changing the "./configure" options.
+This requires a clone of this repository and [Docker](https://www.docker.com/). All you need to do is have Docker setup and running on your machine. The [`Makefile`](Makefile) will take care of the rest.
 
-You can run the builds in a [Docker](https://www.docker.com/) container:
+Configuring is as easy as changing the options passed to `./configure` in [scripts/build_nginx](scripts/build_nginx).
+
+Run the builds in a container via:
 
 ```
-$ make build # It outputs the latest builds to bin/cedar-*
+$ make build
 ```
 
-To test the builds:
+The binaries will be packed into `tar` files and placed in the repository's root directory. Commit the changes and push your repository.
+
+Finally update your app to use your custom buildpack on Heroku either at https://dashboard.heroku.com/apps/#{YOUR_APP_NAME}/settings or via the Heroku CLI via:
+
+```
+heroku buildpacks:set #{YOUR_GIT_REPO_CLONE}
+```
+
+To test the builds locally:
 
 ```
 $ make shell

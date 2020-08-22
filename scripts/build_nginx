@@ -1,13 +1,8 @@
 #!/bin/bash
-# Build NGINX and modules on Heroku.
-# This program is designed to run in a web dyno provided by Heroku.
-# We would like to build an NGINX binary for the builpack on the
-# exact machine in which the binary will run.
-# Our motivation for running in a web dyno is that we need a way to
-# download the binary once it is built so we can vendor it in the buildpack.
-#
-# Once the dyno has is 'up' you can open your browser and navigate
-# this dyno's directory structure to download the nginx binary.
+# Build NGINX and modules for Heroku.
+# This script is designed to run in a Heroku Stack Docker
+# image. More information on the Heroku Stack can be found
+# at https://devcenter.heroku.com/articles/stack
 
 NGINX_VERSION=${NGINX_VERSION-1.18.0}
 PCRE_VERSION=${PCRE_VERSION-8.44}
@@ -41,6 +36,7 @@ echo "Downloading $zlib_url"
 echo "Downloading $uuid4_url"
 (cd nginx-${NGINX_VERSION} && curl -L $uuid4_url | tar xvz )
 
+# This will build `nginx`
 (
   cd nginx-${NGINX_VERSION}
   ./configure \
@@ -55,6 +51,7 @@ echo "Downloading $uuid4_url"
   make install
 )
 
+# This will build `nginx-debug`
 (
   cd nginx-${NGINX_VERSION}
   ./configure \
