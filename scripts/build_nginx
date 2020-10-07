@@ -36,6 +36,26 @@ echo "Downloading $zlib_url"
 echo "Downloading $uuid4_url"
 (cd nginx-${NGINX_VERSION} && curl -L $uuid4_url | tar xvz )
 
+if [ -d "/buildpack/support/patchfiles/${NGINX_VERSION}" ]
+then
+    PATCHFILES=$(find /buildpack/support/patchfiles/${NGINX_VERSION} -name '*.patch')
+else
+    exit 1
+fi
+
+
+NGX_SHUTDOWN_SIGNAL=TERM
+NGX_TERMINATE_SIGNAL=QUIT
+
+(
+  cd nginx-${NGINX_VERSION}
+  for f in $PATCHFILES
+  do
+    echo "patch: $f"
+    patch -p0 < $f
+  done
+)
+
 # This will build `nginx`
 (
   cd nginx-${NGINX_VERSION}
