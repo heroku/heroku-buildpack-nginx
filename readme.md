@@ -108,6 +108,16 @@ $ heroku config:set NGINX_WORKER_CONNECTIONS=2048
 
 You can provide your own NGINX config by creating a file named `nginx.conf.erb` in the config directory of your app. Start by copying the buildpack's [default config file](config/nginx.conf.erb).
 
+### Force SSL
+
+You can add a redirect/force SSL based on Heroku headers. Full, commented example in the [default config file](config/nginx.conf.erb) or in the [nextjs with forceSSL config file](config/nginx-nextjs-with-forcessl.conf.erb).
+
+```
+if ($http_x_forwarded_proto != "https") {
+  return 301 https://$host$request_uri;
+}
+```
+
 ### Customizable NGINX Compile Options
 
 This requires a clone of this repository and [Docker](https://www.docker.com/). All you need to do is have Docker setup and running on your machine. The [`Makefile`](Makefile) will take care of the rest.
