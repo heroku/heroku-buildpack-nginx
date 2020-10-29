@@ -1,5 +1,5 @@
 daemon off;
-#Heroku dynos have at least 4 cores.
+# Heroku dynos have at least 4 cores.
 worker_processes <%= ENV['NGINX_WORKERS'] || 4 %>;
 
 events {
@@ -9,9 +9,9 @@ events {
 }
 
 http {
-        gzip on;
-        gzip_comp_level 2;
-        gzip_min_length 512;
+	gzip on;
+	gzip_comp_level 2;
+	gzip_min_length 512;
 
 	server_tokens off;
 
@@ -23,7 +23,7 @@ http {
 	default_type application/octet-stream;
 	sendfile on;
 
-	#Must read the body in 5 seconds.
+	# Must read the body in 5 seconds.
 	client_body_timeout 5;
 
 	server {
@@ -32,10 +32,10 @@ http {
 		keepalive_timeout 5;
 
 		location / {
-      
-      if ($http_x_forwarded_proto != "https") {
-        return 301 https://$host$request_uri;
-      }
+
+			if ($http_x_forwarded_proto != "https") {
+				return 301 https://$host$request_uri;
+			}
 
 			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 			proxy_set_header Host $http_host;
