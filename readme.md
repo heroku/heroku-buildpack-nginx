@@ -182,7 +182,7 @@ $ git commit -m 'Update unicorn config to listen on NGINX socket.'
 ```
 Deploy Changes
 ```bash
-$ git push heroku master
+$ git push heroku main
 ```
 
 ### New App
@@ -230,7 +230,7 @@ $ heroku buildpacks:add heroku/ruby
 $ heroku buildpacks:add https://github.com/heroku/heroku-buildpack-nginx
 $ git add .
 $ git commit -am "init"
-$ git push heroku master
+$ git push heroku main
 $ heroku logs -t
 ```
 Visit App
