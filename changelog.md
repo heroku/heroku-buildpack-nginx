@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [x.x.x] - xxxx-xx-xx
 ### Changes
 - [cedar-14] Removed
+- [heroku-16] Removed
 - rename master branch to main
 
 ## [1.5.1] - 2020-08-22
