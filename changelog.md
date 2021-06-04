@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [x.x] - xxxx-xx-xx
 ### Changes
+- [heroku-18] updated nginx to 1.20.1
+- [heroku-20] updated nginx to 1.20.1
 - [heroku-16] Removed
 
 ## [1.6] - 2021-05-27
