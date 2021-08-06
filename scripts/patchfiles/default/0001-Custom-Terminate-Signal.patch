@@ -1,0 +1,13 @@
+--- src/core/ngx_config.h	2020-05-23 04:21:07.000000000 +0000
++++ src/core/ngx_config.h	2020-05-23 04:15:17.000000000 +0000
+@@ -56,9 +56,8 @@
+
+ #define ngx_random               random
+
+-/* TODO: #ifndef */
+-#define NGX_SHUTDOWN_SIGNAL      QUIT
+-#define NGX_TERMINATE_SIGNAL     TERM
++#define NGX_SHUTDOWN_SIGNAL      TERM
++#define NGX_TERMINATE_SIGNAL     QUIT
+ #define NGX_NOACCEPT_SIGNAL      WINCH
+ #define NGX_RECONFIGURE_SIGNAL   HUP
