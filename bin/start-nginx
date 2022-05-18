@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+trap "echo start-nginx got SIGTERM. Ignoring while nginx shuts down gracefully" SIGTERM
+
 psmgr=/tmp/nginx-buildpack-wait
 rm -f $psmgr
 mkfifo $psmgr
