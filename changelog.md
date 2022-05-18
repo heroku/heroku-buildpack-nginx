@@ -6,9 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.x] - 2022-0x-0x
 ### Changes
-- [heroku-18] updated nginx to 1.20.2
-- [heroku-20] updated nginx to 1.20.2
-
+- [heroku-18] updated nginx to 1.20.2, bump zlib to 1.2.12, updated PCRE to 8.45
+- [heroku-20] updated nginx to 1.20.2, bump zlib to 1.2.12, updated PCRE to 8.45
 
 ## [1.7] - 2021-06-04
 ### Changes
