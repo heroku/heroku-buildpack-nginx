@@ -4,14 +4,14 @@
 # image. More information on the Heroku Stack can be found
 # at https://devcenter.heroku.com/articles/stack
 
-NGINX_VERSION=${NGINX_VERSION-1.20.1}
-PCRE_VERSION=${PCRE_VERSION-8.44}
+NGINX_VERSION=${NGINX_VERSION-1.20.2}
+PCRE_VERSION=${PCRE_VERSION-8.45}
 HEADERS_MORE_VERSION=${HEADERS_MORE_VERSION-0.33}
-ZLIB_VERSION=${ZLIB_VERSION-1.2.11}
+ZLIB_VERSION=${ZLIB_VERSION-1.2.12}
 UUID4_VERSION=${UUID4_VERSION-master}
 
 nginx_tarball_url=https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz
-pcre_tarball_url=https://ftp.pcre.org/pub/pcre/pcre-${PCRE_VERSION}.tar.gz
+pcre_tarball_url=https://ftp.exim.org/pub/pcre/pcre-${PCRE_VERSION}.tar.gz
 headers_more_nginx_module_url=https://github.com/openresty/headers-more-nginx-module/archive/v${HEADERS_MORE_VERSION}.tar.gz
 uuid4_url=https://github.com/cybozu/nginx-uuid4-module/archive/${UUID4_VERSION}.tar.gz
 zlib_url=http://zlib.net/zlib-${ZLIB_VERSION}.tar.gz
