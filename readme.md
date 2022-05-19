@@ -12,6 +12,8 @@ Some application servers (e.g. Ruby's Unicorn) halt progress when dealing with n
 * NGINX Version: 1.20.1
 ### Heroku 20
 * NGINX Version: 1.20.1
+### Heroku 22
+* NGINX Version: 1.20.1
 
 ## Requirements (Proxy Mode)
 
