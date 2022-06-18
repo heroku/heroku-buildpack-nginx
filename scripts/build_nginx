@@ -25,16 +25,30 @@ echo "Downloading $nginx_tarball_url"
 curl -L $nginx_tarball_url | tar xzv
 
 echo "Downloading $pcre_tarball_url"
-(cd nginx-${NGINX_VERSION} && curl -L $pcre_tarball_url | tar xvz )
+(cd nginx-${NGINX_VERSION} && curl -L $pcre_tarball_url | tar xvz)
 
 echo "Downloading $headers_more_nginx_module_url"
-(cd nginx-${NGINX_VERSION} && curl -L $headers_more_nginx_module_url | tar xvz )
+(cd nginx-${NGINX_VERSION} && curl -L $headers_more_nginx_module_url | tar xvz)
 
 echo "Downloading $zlib_url"
-(cd nginx-${NGINX_VERSION} && curl -L $zlib_url | tar xvz )
+(cd nginx-${NGINX_VERSION} && curl -L $zlib_url | tar xvz)
 
 echo "Downloading $uuid4_url"
-(cd nginx-${NGINX_VERSION} && curl -L $uuid4_url | tar xvz )
+(cd nginx-${NGINX_VERSION} && curl -L $uuid4_url | tar xvz)
+
+if [ -d "/buildpack/scripts/patchfiles/${NGINX_VERSION}" ]; then
+  PATCHFILES=$(find /buildpack/scripts/patchfiles/${NGINX_VERSION} -name '*.patch')
+else
+  PATCHFILES=$(find /buildpack/scripts/patchfiles/default -name '*.patch')
+fi
+
+(
+  cd nginx-${NGINX_VERSION}
+  for f in $PATCHFILES; do
+    echo "patch: $f"
+    patch -p0 <$f
+  done
+)
 
 # This will build `nginx`
 (

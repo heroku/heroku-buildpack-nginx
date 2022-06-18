@@ -1,10 +1,15 @@
 #!/usr/bin/env bash
 
-psmgr=/tmp/nginx-buildpack-wait
-rm -f $psmgr
-mkfifo $psmgr
+# Crash script on errors.
+set -e
 
-# Evaluate config to get $PORT
+# Ignore signal in top script.
+trap '' SIGTERM
+
+# Create array to store processes.
+declare -A process_list
+
+# Evaluate config to get $PORT to attach to.
 erb config/nginx.conf.erb > config/nginx.conf
 
 n=1
@@ -21,29 +26,31 @@ mkdir -p logs/nginx
 touch logs/nginx/access.log logs/nginx/error.log
 echo 'buildpack=nginx at=logs-initialized'
 
-# Start log redirection.
-(
-  # Redirect nginx logs to stdout.
-  tail -qF -n 0 logs/nginx/*.log
-  echo 'logs' >$psmgr
-) &
-
-# Start App Server
+# Start server.
 (
   # Take the command passed to this bin and start it.
   # E.g. bin/start-nginx bundle exec unicorn -c config/unicorn.rb
   COMMAND=${@:$n}
   echo "buildpack=nginx at=start-app cmd=$COMMAND"
   $COMMAND
-  echo 'app' >$psmgr
+  echo 'Server terminated!'
 ) &
+process_list[server]=$!
+
+# Start log redirection.
+(
+  # Redirect nginx logs to stdout.
+  tail -qF -n 0 --pid=${process_list[server]} logs/nginx/*.log
+  echo 'Tail terminated!'
+) &
+process_list[tail]=$!
 
 if [[ -z "$FORCE" ]]
 then
   FILE="/tmp/app-initialized"
 
   # We block on app-initialized so that when nginx binds to $PORT
-  # are app is ready for traffic.
+  # app is ready for traffic.
   while [[ ! -f "$FILE" ]]
   do
     echo 'buildpack=nginx at=app-initialization'
@@ -52,21 +59,16 @@ then
   echo 'buildpack=nginx at=app-initialized'
 fi
 
-# Start nginx
+# Start nginx.
 (
   # We expect nginx to run in foreground.
   # We also expect a socket to be at /tmp/nginx.socket.
   echo 'buildpack=nginx at=nginx-start'
   bin/nginx-debug -p . -c config/nginx.conf
-  echo 'nginx' >$psmgr
+  echo 'Nginx terminated!'
 ) &
+process_list[nginx]=$!
 
-# This read will block the process waiting on a msg to be put into the fifo.
-# If any of the processes defined above should exit,
-# a msg will be put into the fifo causing the read operation
-# to un-block. The process putting the msg into the fifo
-# will use it's process name as a msg so that we can print the offending
-# process to stdout.
-read exit_process <$psmgr
-echo "buildpack=nginx at=exit process=$exit_process"
-exit 1
+# Wait for everything to finish before exiting.
+wait "${process_list[@]}"
+echo 'Bye!'
