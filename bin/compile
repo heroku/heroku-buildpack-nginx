@@ -19,6 +19,31 @@ cp "$BUILD_DIR/nginx/nginx-debug" "$BUILD_DIR/bin/nginx-debug"
 
 nginx_version=$($BUILD_DIR/bin/nginx -V 2>&1 | head -1 | awk '{ print $NF }')
 echo "-----> nginx-buildpack: Installed ${nginx_version} to app/bin"
+
+# The ERB templating feature requires a Ruby install at runtime, for the `erb` command.
+# As of Heroku-22, there is no system Ruby installation in the stack image, so if the
+# app doesn't already have the Ruby buildpack set before this one, we have to vendor
+# our own copy of Ruby and ensure it's on PATH at runtime.
+if ! command -v erb &> /dev/null; then
+  echo "-----> nginx-buildpack: An existing Ruby installation was not found (required for erb template support)"
+  ruby_version="3.1.2"
+  ruby_url="https://heroku-buildpack-ruby.s3.us-east-1.amazonaws.com/${STACK}/ruby-${ruby_version}.tgz"
+  vendored_ruby_dir=".heroku-buildpack-nginx/ruby"
+  mkdir -p "${BUILD_DIR}/${vendored_ruby_dir}"
+
+  if ! curl --silent --show-error --fail --retry 3 --retry-connrefused --connect-timeout 5 "${ruby_url}" | tar -zxC "${BUILD_DIR}/${vendored_ruby_dir}"; then
+    echo "     ! Failed to download Ruby from '${ruby_url}'" >&2
+    exit 1
+  fi
+
+  mkdir -p "${BUILD_DIR}/.profile.d"
+  # Deliberately pick the same profile.d script filepath as the Ruby buildpack,
+  # so if the Ruby buildpack comes after this one, it will overwrite this script.
+  echo "export PATH=\"\${HOME}/${vendored_ruby_dir}/bin:\${PATH}\"" > "${BUILD_DIR}/.profile.d/ruby.sh"
+
+  echo "-----> nginx-buildpack: Installed Ruby ${ruby_version}"
+fi
+
 cp bin/start-nginx "$BUILD_DIR/bin/"
 echo '-----> nginx-buildpack: Added start-nginx to app/bin'
 cp bin/start-nginx-debug "$BUILD_DIR/bin/"
