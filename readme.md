@@ -150,7 +150,7 @@ The buildpack will not start NGINX until a file has been written to `/tmp/app-in
 
 ## Setup
 
-Here are 2 setup examples. One example for a new app, another for an existing app. In both cases, we are working with ruby & unicorn. Keep in mind that this buildpack is not ruby specific.
+Here are 2 setup examples. One example for a new app, another for an existing app. In both cases, we are working with ruby & unicorn. Keep in mind that this buildpack is not ruby specific. However if your app does happen to use Ruby, make sure to add the NGINX buildpack **after** the Ruby buildpack, so the NGINX buildpack doesn't have to install its own redundant copy of Ruby for the ERB templating feature.
 
 ### Existing App
 
@@ -227,7 +227,7 @@ Create & Push Heroku App:
 ```bash
 $ heroku create
 $ heroku buildpacks:add heroku/ruby
-$ heroku buildpacks:add https://github.com/heroku/heroku-buildpack-nginx
+$ heroku buildpacks:add heroku-community/nginx
 $ git add .
 $ git commit -am "init"
 $ git push heroku main
