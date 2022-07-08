@@ -1,6 +1,12 @@
-# Heroku Buildpack: NGINX
+# Heroku Buildpack: NGINX (For Border)
 
 Nginx-buildpack vendors NGINX inside a dyno and connects NGINX to an app server via UNIX domain sockets.
+
+This fork contains modifications made specifically for Border's infrastructure, and includes the following.
+
+- http_sub_module
+- http_v2_module
+- poll_module
 
 ## Motivation
 
