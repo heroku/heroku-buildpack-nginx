@@ -1,43 +1,67 @@
-# Heroku Buildpack: NGINX
+# Heroku Buildpack: Nginx
 
-Nginx-buildpack vendors NGINX inside a dyno and connects NGINX to an app server via UNIX domain sockets.
-
-## Motivation
-
-Some application servers (e.g. Ruby's Unicorn) halt progress when dealing with network I/O. Heroku's routing stack [buffers only the headers](https://devcenter.heroku.com/articles/http-routing#request-buffering) of inbound requests. (The router will buffer the headers and body of a response up to 1MB) Thus, the Heroku router engages the dyno during the entire body transfer –from the client to dyno. For applications servers with blocking I/O, the latency per request will be degraded by the content transfer. By using NGINX in front of the application server, we can eliminate a great deal of transfer time from the application server. In addition to making request body transfers more efficient, all other I/O should be improved since the application server need only communicate with a UNIX socket on localhost. Basically, for webservers that are not designed for efficient, non-blocking I/O, we will benefit from having NGINX to handle all I/O operations.
-
-## Versions
-
-### Heroku 18
-* NGINX Version: 1.20.2
-### Heroku 20
-* NGINX Version: 1.20.2
-### Heroku 22
-* NGINX Version: 1.20.2
-
-## Requirements (Proxy Mode)
-
-* Your webserver listens to the socket at `/tmp/nginx.socket`.
-* You touch `/tmp/app-initialized` when you are ready for traffic.
-* You can start your web server with a shell command.
-
-## Requirements (Solo Mode)
-
-* Add a custom nginx config to your app source code at `config/nginx.conf.erb`. You can start by copying the [sample config for nginx solo mode](config/nginx-solo-sample.conf.erb).
+Nginx-buildpack installs & runs the powerful [Nginx web server](https://nginx.org/) inside a Heroku app.
 
 ## Features
 
-* Unified NXNG/App Server logs.
-* [L2met](https://github.com/ryandotsmith/l2met) friendly NGINX log format.
-* [Heroku request ids](https://devcenter.heroku.com/articles/http-request-id) embedded in NGINX logs.
-* Crashes dyno if NGINX or App server crashes. Safety first.
-* Language/App Server agnostic.
-* Customizable NGINX config.
-* Application coordinated dyno starts.
+* [Static mode](#static-mode): operates as an HTTP server for websites and single page apps
+* [Proxy mode](#proxy-mode): operates as an HTTP proxy to an app server running in the same dyno, via UNIX domain sockets
+* [Heroku request ids](https://devcenter.heroku.com/articles/http-request-id) embedded in access logs
+* total customization via [Nginx's extensive config](https://nginx.org/en/docs/) in `config/nginx.erb.conf`
+
+## Versions
+
+These are auto-selected based on the app's stack at build time.
+
+### Heroku 18
+* Nginx Version: 1.20.2
+### Heroku 20
+* Nginx Version: 1.20.2
+### Heroku 22
+* Nginx Version: 1.20.2
+
+
+## Static Mode
+
+**Newest mode** operates as an HTTP server for websites and single page apps.
+
+* Enable by copying the [sample config `config/nginx-static.conf.erb`](config/nginx-static.conf.erb) to your app source code at `config/nginx.conf.erb`
+* In the `Procfile`, `web` entry,
+	- start nginx `bin/start-nginx-static`
+	- example `web: bin/start-nginx-static`
+* Follow [nginx docs](https://nginx.org/en/docs/) to further revise the config for custom routing & request handling.
 
 ### Logging
 
-NGINX will output the following style of logs:
+Sends error & access loglines directly into logplex, for combined logging in the Heroku app.
+
+### Force SSL
+
+Forces secure HTTP for all requests, by sending 301 redirect responses from `http` to `https`.
+
+### Document root
+
+The default server document root is `/app/dist`. Set `NGINX_ROOT` to change to a different root directory to serve public HTML.
+
+
+## Proxy Mode
+
+**Default mode** operates as an HTTP proxy to an app server running in the same dyno, via UNIX domain sockets.
+
+* Enabled by the [default config `config/nginx.conf.erb`](config/nginx.conf.erb)
+	- specifically when `config/nginx.conf.rb` is not present in the app source
+	- to customize, copy the [default config](config/nginx-static.conf.erb) to your app source code at `config/nginx.conf.erb`
+* In the `Procfile`, `web` entry,
+	- start nginx + your backend server `bin/start-nginx <backend server command>`
+	- example `web: bin/start-nginx bundle exec unicorn -c config/unicorn.rb`
+* Backend must listen to the socket at `/tmp/nginx.socket`
+* Touch `/tmp/app-initialized` when the backend is ready for traffic.
+
+### Logging
+
+**Proxy mode writes logs to files, which is not the Heroku way. They should go to stdout & stderr.**
+
+Nginx will output the following style of logs:
 
 ```
 measure.nginx.service=0.007 request_id=e2c79e86b3260b9c703756ec93f8a66d
@@ -61,33 +85,41 @@ $ heroku config:set NGINX_ACCESS_LOG_PATH="/dev/null"
 
 nginx-buildpack provides a command named `bin/start-nginx` this command takes another command as an argument. You must pass your app server's startup command to `start-nginx`.
 
-For example, to get NGINX and Unicorn up and running:
+For example, to get Nginx and Unicorn up and running:
 
 ```bash
 $ cat Procfile
 web: bin/start-nginx bundle exec unicorn -c config/unicorn.rb
 ```
 
-#### nginx debug mode
+#### Proxy mode nginx-debug
 ```bash
 $ cat Procfile
 web: bin/start-nginx-debug bundle exec unicorn -c config/unicorn.rb
 ```
 
-### nginx Solo Mode
+### Application/Dyno coordination
 
-nginx-buildpack provides a command named `bin/start-nginx-solo`. This is for you if you don't want to run an additional app server on the Dyno.
-This mode requires you to put a `config/nginx.conf.erb` in your app code. You can start by coping the [sample config for nginx solo mode](config/nginx-solo-sample.conf.erb).
-To get NGINX Solo Mode running:
+Proxy mode will not start Nginx until a file has been written to `/tmp/app-initialized`. Since Nginx binds to the dyno's `$PORT` and since the `$PORT` determines if the app can receive traffic, you can delay Nginx accepting traffic until your application is ready to handle it. The [examples below](#example-proxy-setup) show how/when you should write the file when working with Unicorn.
 
-```bash
-$ cat Procfile
-web: bin/start-nginx-solo
-```
+
+## Solo Mode (deprecated)
+
+This mode has been superceeded by [Static Mode](#static-mode). It remains here for backward compatibility.
+
+* Enable by copying the [sample config `config/nginx-solo-sample.conf.erb`](config/nginx-solo-sample.conf.erb) to your app source code at `config/nginx.conf.erb`
+* In the `Procfile`, `web` entry,
+	- start nginx `bin/start-nginx-solo`
+	- example `web: bin/start-nginx-solo`
+* Follow [nginx docs](https://nginx.org/en/docs/) to further revise the config for custom routing & request handling.
+
+
+
+## General configuration
 
 ### Setting the Worker Processes and Connections
 
-You can configure NGINX's `worker_processes` directive via the
+You can configure Nginx's `worker_processes` directive via the
 `NGINX_WORKERS` environment variable.
 
 For example, to set your `NGINX_WORKERS` to 8 on a PX dyno:
@@ -102,10 +134,6 @@ Similarly, the `NGINX_WORKER_CONNECTIONS` environment variable can configure the
 $ heroku config:set NGINX_WORKER_CONNECTIONS=2048
 ```
 
-### Customizable NGINX Config
-
-You can provide your own NGINX config by creating a file named `nginx.conf.erb` in the config directory of your app. Start by copying the buildpack's [default config file](config/nginx.conf.erb).
-
 ### Force SSL
 
 You can add a redirect/force SSL based on Heroku headers. Full, commented example in the [default config file](config/nginx.conf.erb) or in the [nextjs with forceSSL config file](config/nginx-nextjs-with-forcessl.conf.erb).
@@ -116,7 +144,7 @@ if ($http_x_forwarded_proto != "https") {
 }
 ```
 
-### Customizable NGINX Compile Options
+### Customizable Nginx Compile Options
 
 This requires a clone of this repository and [Docker](https://www.docker.com/). All you need to do is have Docker setup and running on your machine. The [`Makefile`](Makefile) will take care of the rest.
 
@@ -144,13 +172,9 @@ $ cp bin/nginx-$STACK bin/nginx
 $ FORCE=1 bin/start-nginx
 ```
 
-### Application/Dyno coordination
+## Example Proxy Setup
 
-The buildpack will not start NGINX until a file has been written to `/tmp/app-initialized`. Since NGINX binds to the dyno's $PORT and since the $PORT determines if the app can receive traffic, you can delay NGINX accepting traffic until your application is ready to handle it. The examples below show how/when you should write the file when working with Unicorn.
-
-## Setup
-
-Here are 2 setup examples. One example for a new app, another for an existing app. In both cases, we are working with ruby & unicorn. Keep in mind that this buildpack is not ruby specific. However if your app does happen to use Ruby, make sure to add the NGINX buildpack **after** the Ruby buildpack, so the NGINX buildpack doesn't have to install its own redundant copy of Ruby for the ERB templating feature.
+Here are 2 setup examples. One example for a new app, another for an existing app. In both cases, we are working with ruby & unicorn. Keep in mind that this buildpack is not ruby specific. However if your app does happen to use Ruby, make sure to add the Nginx buildpack **after** the Ruby buildpack, so the Nginx buildpack doesn't have to install its own redundant copy of Ruby for the ERB templating feature.
 
 ### Existing App
 
@@ -166,7 +190,7 @@ web: bin/start-nginx bundle exec unicorn -c config/unicorn.rb
 ```
 ```bash
 $ git add Procfile
-$ git commit -m 'Update procfile for NGINX buildpack'
+$ git commit -m 'Update procfile for Nginx buildpack'
 ```
 Update Unicorn Config
 ```ruby
@@ -178,7 +202,7 @@ end
 ```
 ```bash
 $ git add config/unicorn.rb
-$ git commit -m 'Update unicorn config to listen on NGINX socket.'
+$ git commit -m 'Update unicorn config to listen on Nginx socket.'
 ```
 Deploy Changes
 ```bash
@@ -237,6 +261,10 @@ Visit App
 ```
 $ heroku open
 ```
+
+## Original Motivation
+
+Some application servers (e.g. Ruby's Unicorn) halt progress when dealing with network I/O. Heroku's routing stack [buffers only the headers](https://devcenter.heroku.com/articles/http-routing#request-buffering) of inbound requests. (The router will buffer the headers and body of a response up to 1MB) Thus, the Heroku router engages the dyno during the entire body transfer –from the client to dyno. For applications servers with blocking I/O, the latency per request will be degraded by the content transfer. By using Nginx in front of the application server, we can eliminate a great deal of transfer time from the application server. In addition to making request body transfers more efficient, all other I/O should be improved since the application server need only communicate with a UNIX socket on localhost. Basically, for webservers that are not designed for efficient, non-blocking I/O, we will benefit from having Nginx to handle all I/O operations.
 
 ## License
 Copyright (c) 2013 Ryan R. Smith
