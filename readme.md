@@ -25,11 +25,17 @@ These are auto-selected based on the app's stack at build time.
 
 **Newest mode** operates as an HTTP server for websites and single page apps.
 
-* Enable by copying the [sample config `config/nginx-static.conf.erb`](config/nginx-static.conf.erb) to your app source code at `config/nginx.conf.erb`
-* In the `Procfile`, `web` entry,
-	- start nginx `bin/start-nginx-static`
-	- example `web: bin/start-nginx-static`
-* Follow [nginx docs](https://nginx.org/en/docs/) to further revise the config for custom routing & request handling.
+Add this buildpack branch to an app, as the last buildpack:
+```bash
+heroku buildpacks:add --app APP_NAME https://github.com/heroku/heroku-buildpack-nginx.git#improve-herokuness
+```
+
+Create the `Procfile` in the root of your app, containing,
+```
+web: bin/start-nginx-static
+```
+
+Copy the [Nginx static config](config/nginx-static.conf.erb) into your app as `config/nginx.conf.erb`. Review the guiding comments in the config file, and follow [nginx docs](https://nginx.org/en/docs/) to further revise the config for custom routing & request handling.
 
 ### Logging
 
@@ -48,18 +54,26 @@ The default server document root is `/app/dist`. Set `NGINX_ROOT` to change to a
 
 **Default mode** operates as an HTTP proxy to an app server running in the same dyno, via UNIX domain sockets.
 
-* Enabled by the [default config `config/nginx.conf.erb`](config/nginx.conf.erb)
-	- specifically when `config/nginx.conf.rb` is not present in the app source
-	- to customize, copy the [default config](config/nginx-static.conf.erb) to your app source code at `config/nginx.conf.erb`
-* In the `Procfile`, `web` entry,
-	- start nginx + your backend server `bin/start-nginx <backend server command>`
-	- example `web: bin/start-nginx bundle exec unicorn -c config/unicorn.rb`
-* Backend must listen to the socket at `/tmp/nginx.socket`
+Add this buildpack to an app, as the last buildpack:
+```bash
+heroku buildpacks:add --app APP_NAME https://github.com/heroku/heroku-buildpack-nginx.git
+```
+
+Create the `Procfile` in the root of your app, containing,
+```
+web: bin/start-nginx <backend server command>
+```
+Example with backend server command: `bin/start-nginx bundle exec unicorn -c config/unicorn.rb`
+
+Backend server must:
+* Listen to the socket at `/tmp/nginx.socket`.
 * Touch `/tmp/app-initialized` when the backend is ready for traffic.
+
+The [default config `config/nginx.conf.erb`](config/nginx.conf.erb) will be loaded. To customize, copy the default config to your app source code at `config/nginx.conf.erb`
 
 ### Logging
 
-**Proxy mode writes logs to files, which is not the Heroku way. They should go to stdout & stderr.**
+**Proxy mode writes logs to files, which is not the Heroku way. They should go to stdout.**
 
 Nginx will output the following style of logs:
 
@@ -107,10 +121,8 @@ Proxy mode will not start Nginx until a file has been written to `/tmp/app-initi
 
 This mode has been superceeded by [Static Mode](#static-mode). It remains here for backward compatibility.
 
-* Enable by copying the [sample config `config/nginx-solo-sample.conf.erb`](config/nginx-solo-sample.conf.erb) to your app source code at `config/nginx.conf.erb`
-* In the `Procfile`, `web` entry,
-	- start nginx `bin/start-nginx-solo`
-	- example `web: bin/start-nginx-solo`
+* Enable by copying the [sample config](config/nginx-solo-sample.conf.erb) to your app source code at `config/nginx.conf.erb`
+* In the `Procfile`, `web: bin/start-nginx-solo`
 * Follow [nginx docs](https://nginx.org/en/docs/) to further revise the config for custom routing & request handling.
 
 
