@@ -1,6 +1,6 @@
 # Heroku Buildpack: Nginx for static sites
 
-**Newest mode** operates as an HTTP server for websites and single page apps.
+Operates as an HTTP server for websites and single page apps.
 
 ## Usage
 

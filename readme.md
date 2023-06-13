@@ -1,14 +1,19 @@
 # Heroku Buildpack: Nginx
 
-Nginx-buildpack installs & runs the powerful [Nginx web server](https://nginx.org/) inside a Heroku app.
+Nginx-buildpack installs & runs the [Nginx web server](https://nginx.org/) inside a Heroku app.
 
 ## Features
 
-* writes [Heroku request ids](https://devcenter.heroku.com/articles/http-request-id) & server timing to access logs
-* complete control of [Nginx config](https://nginx.org/en/docs/) in `config/nginx.erb.conf`
+* Presets for specific use-cases
+	- [Static sites](static.md)
+	- [Local proxy to app servers](proxy.md)
+* Complete control Nginx config in `config/nginx.erb.conf`
+	- [`erb` template](https://github.com/ruby/erb) supports dynamic config at start-up
 	- see [Nginx docs](https://nginx.org/en/docs/)
+* writes [Heroku request ids](https://devcenter.heroku.com/articles/http-request-id) & server timing to access logs
 
-## Versions
+
+### Nginx versions
 
 These are auto-selected based on the app's stack at build time.
 
@@ -19,15 +24,15 @@ These are auto-selected based on the app's stack at build time.
 ### Heroku 22
 * Nginx Version: 1.20.2
 
-## Modes
+## Presets
 
 With Nginx's flexibility, it can be configured & used for many different purposes. See the documentation for the mode you wish to use.
 
-### [Static mode](static.md)
+### [Static sites](static.md)
 
 HTTP server for websites and single page apps. [[docs](static.md)]
 
-### [Proxy mode](proxy.md)
+### [Local proxy](proxy.md)
 
 HTTP proxy to an app server running in the same dyno, via UNIX domain sockets. [[docs](proxy.md)]
 

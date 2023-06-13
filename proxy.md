@@ -1,6 +1,6 @@
-# Heroku Buildpack: Nginx to proxy to backend app servers
+# Heroku Buildpack: Nginx local proxy to backend app servers
 
-**Default mode** operates as an HTTP proxy to an app server running in the same dyno, via UNIX domain sockets.
+Operates as an HTTP proxy to an app server running in the same dyno, via UNIX domain sockets.
 
 Add this buildpack to an app, as the last buildpack:
 ```bash
