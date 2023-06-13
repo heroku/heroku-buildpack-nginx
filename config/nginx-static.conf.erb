@@ -25,11 +25,9 @@ http {
 
 	server_tokens off;
 
-	log_format heroku_www_app 
-		'$remote_addr - $http_x_request_id [$time_iso8601] '
-		'"$request" $status $body_bytes_sent '
-		'"$http_referer" "$http_user_agent"';
-	access_log /dev/stdout heroku_www_app;
+	log_format l2met 'measure#nginx.service=$request_time request_id=$http_x_request_id';
+	access_log /dev/stdout l2met;
+	# Remote IP, request path, HTTP status, & timestamp are all logged by Heroku Router, so not useful to include here.
 
 	include mime.types;
 	default_type application/octet-stream;
@@ -49,7 +47,8 @@ http {
 			return 301 https://$host$request_uri;
 		}
 
-		root <%= ENV["NGINX_ROOT"] || '/app/dist' %>;
+		## Document root
+		root /app/dist;
 
 		location / {
 			## Clean URLs: match on extensionless requests.
