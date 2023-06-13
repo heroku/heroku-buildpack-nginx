@@ -7,7 +7,7 @@ Nginx-buildpack installs & runs the [Nginx web server](https://nginx.org/) insid
 * Presets for specific use-cases
 	- [Static sites](static.md)
 	- [Local proxy to app servers](proxy.md)
-* Complete control Nginx config in `config/nginx.erb.conf`
+* Complete control of Nginx config in `config/nginx.erb.conf`
 	- [`erb` template](https://github.com/ruby/erb) supports dynamic config at start-up
 	- see [Nginx docs](https://nginx.org/en/docs/)
 * writes [Heroku request ids](https://devcenter.heroku.com/articles/http-request-id) & server timing to access logs
