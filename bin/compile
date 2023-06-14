@@ -26,7 +26,7 @@ echo "-----> nginx-buildpack: Installed ${nginx_version} to app/bin"
 # our own copy of Ruby and ensure it's on PATH at runtime.
 if ! command -v erb &> /dev/null; then
   echo "-----> nginx-buildpack: An existing Ruby installation was not found (required for erb template support)"
-  ruby_version="3.1.2"
+  ruby_version="3.2.2"
   ruby_url="https://heroku-buildpack-ruby.s3.us-east-1.amazonaws.com/${STACK}/ruby-${ruby_version}.tgz"
   vendored_ruby_dir=".heroku-buildpack-nginx/ruby"
   mkdir -p "${BUILD_DIR}/${vendored_ruby_dir}"
