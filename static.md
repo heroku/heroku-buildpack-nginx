@@ -8,9 +8,8 @@ Operates as an HTTP server for websites and single page apps.
 
 Add this buildpack branch to an app, as the last buildpack:
 ```bash
-heroku buildpacks:add --app APP_NAME https://github.com/heroku/heroku-buildpack-nginx.git#improve-herokuness
+heroku buildpacks:add --app APP_NAME heroku-community/nginx
 ```
-(This should be updated to `heroku-community/nginx` once merged.)
 
 ### 2. Create Procfile
 
