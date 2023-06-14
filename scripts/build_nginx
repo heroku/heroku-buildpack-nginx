@@ -4,10 +4,10 @@
 # image. More information on the Heroku Stack can be found
 # at https://devcenter.heroku.com/articles/stack
 
-NGINX_VERSION=${NGINX_VERSION-1.20.2}
+NGINX_VERSION=${NGINX_VERSION-1.25.1}
 PCRE_VERSION=${PCRE_VERSION-8.45}
-HEADERS_MORE_VERSION=${HEADERS_MORE_VERSION-0.33}
-ZLIB_VERSION=${ZLIB_VERSION-1.2.12}
+HEADERS_MORE_VERSION=${HEADERS_MORE_VERSION-0.34}
+ZLIB_VERSION=${ZLIB_VERSION-1.2.13}
 UUID4_VERSION=${UUID4_VERSION-master}
 
 nginx_tarball_url=https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz
