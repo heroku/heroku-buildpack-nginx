@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 - New "Static site" preset config
 - New `bin/start-nginx-static` to simply start Nginx, its process attached and sending logs to stdout
+- [all stacks] updated nginx to 1.25.1, zlib to 1.2.13, headers-more-nginx-module to 0.34, ruby to 3.2.2
 
 ## [1.9] - 2022-06-21
 ### Changes

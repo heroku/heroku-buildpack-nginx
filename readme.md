@@ -39,7 +39,18 @@ _Proxy is the original buildpack mode that is enabled by default, if the `config
 
 ### Solo mode (deprecated)
 
-This mode has been superceeded by [Static mode](static.md).
+This mode has been superceeded by [Static mode](static.md). 
+
+## Custom Nginx usage
+
+Have a use for Nginx that does not fit one of the above presets?
+
+Add this buildpack to an app, as the last buildpack:
+```bash
+heroku buildpacks:add --app APP_NAME heroku-community/nginx
+```
+
+…and then setup `config/nginx.conf.erb` & `Procfile` in the app's source repo.
 
 ## General configuration
 
@@ -87,3 +98,27 @@ $ make shell
 $ cp bin/nginx-$STACK bin/nginx
 $ FORCE=1 bin/start-nginx
 ```
+
+## Upgrading dependencies
+
+Process docs for buildpack maintainers.
+
+### Upgrading Nginx, PCRE, zlib
+
+_Please use only stable, even-numbered [Nginx releases](https://nginx.org/en/download.html)._
+
+Revise the version variables in `scripts/build_nginx`, and then run the builds in a container (requires Docker) via:
+
+```
+$ make build
+```
+
+Then, commit & pull-request the resulting changes.
+
+### Upgrading Ruby
+
+_Ruby versions are downloaded from heroku-buildpack-ruby's distribution site. Only Heroku's [supported Ruby versions](https://devcenter.heroku.com/articles/ruby-support#ruby-versions) are available._
+
+Revise the `ruby_version` variable in `bin/compile`.
+
+Then, commit & pull-request the resulting changes.
