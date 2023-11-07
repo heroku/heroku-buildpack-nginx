@@ -19,7 +19,6 @@ These are auto-selected based on the app's stack at build time.
 
 | Heroku Stack | Nginx Version |
 |--------------|--------------:|
-| `Heroku-18` | `1.25.1` |
 | `Heroku-20` | `1.25.1` |
 | `Heroku-22` | `1.25.1` |
 
@@ -39,7 +38,7 @@ _Proxy is the original buildpack mode that is enabled by default, if the `config
 
 ### Solo mode (deprecated)
 
-This mode has been superceeded by [Static mode](static.md). 
+This mode has been superceeded by [Static mode](static.md).
 
 ## Custom Nginx usage
 
