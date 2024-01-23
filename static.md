@@ -23,6 +23,10 @@ web: bin/start-nginx-static
 1. Copy the [static config](config/nginx-static.conf.erb) into your app as `config/nginx.conf.erb`.
 2. Set the [document root](#document-root) for your app (default is `/app/dist`, this varies by framework/build system).
 
+#### Migrating from heroku-buildpack-static
+
+To extract the Nginx config from a prior `static.json` app, see [heroku-buildpack-static transition guide](https://github.com/heroku/heroku-buildpack-static#warning-heroku-buildpack-static-is-deprecated).
+
 ## Configuration
 
 Everything is set-up in `config/nginx.conf.erb`.
