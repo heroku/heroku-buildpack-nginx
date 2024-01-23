@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [unlreleased] - XXXX-XX-XX
 ### Changes
 - [heroku-18] Removed
+- Add documentation for migrating from heroku-community/static buildpack
 
 ## [1.10] - 2023-06-13
 ### Changes
