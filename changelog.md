@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 - [heroku-18] Removed
 - Add documentation for migrating from heroku-community/static buildpack
+- Update zlib from 1.2.13 to 1.3.1
 
 ## [1.10] - 2023-06-13
 ### Changes
