@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add documentation for migrating from heroku-community/static buildpack
 - Link against system libpcre3
 - Link against system zlib
+- Update nginx to 1.26.0
+- Update headers-more-nginx-module to 0.37
 
 ## [1.10] - 2023-06-13
 ### Changes

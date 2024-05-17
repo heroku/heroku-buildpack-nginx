@@ -9,9 +9,9 @@ set -o pipefail
 # fail harder
 set -eu
 
-NGINX_VERSION=${NGINX_VERSION-1.25.1}
-HEADERS_MORE_VERSION=${HEADERS_MORE_VERSION-0.34}
-UUID4_VERSION=${UUID4_VERSION-master}
+NGINX_VERSION=${NGINX_VERSION-1.26.0}
+HEADERS_MORE_VERSION=${HEADERS_MORE_VERSION-0.37}
+UUID4_VERSION=${UUID4_VERSION-f8f7ff44e6a8c6cf75232ae4b63d011f2f3b34c1}
 
 nginx_tarball_url=https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz
 headers_more_nginx_module_url=https://github.com/openresty/headers-more-nginx-module/archive/v${HEADERS_MORE_VERSION}.tar.gz
