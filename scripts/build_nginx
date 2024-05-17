@@ -5,13 +5,11 @@
 # at https://devcenter.heroku.com/articles/stack
 
 NGINX_VERSION=${NGINX_VERSION-1.25.1}
-PCRE_VERSION=${PCRE_VERSION-8.45}
 HEADERS_MORE_VERSION=${HEADERS_MORE_VERSION-0.34}
 ZLIB_VERSION=${ZLIB_VERSION-1.3.1}
 UUID4_VERSION=${UUID4_VERSION-master}
 
 nginx_tarball_url=https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz
-pcre_tarball_url=https://ftp.exim.org/pub/pcre/pcre-${PCRE_VERSION}.tar.gz
 headers_more_nginx_module_url=https://github.com/openresty/headers-more-nginx-module/archive/v${HEADERS_MORE_VERSION}.tar.gz
 uuid4_url=https://github.com/cybozu/nginx-uuid4-module/archive/${UUID4_VERSION}.tar.gz
 zlib_url=http://zlib.net/zlib-${ZLIB_VERSION}.tar.gz
@@ -24,9 +22,6 @@ echo "Temp dir: $temp_dir"
 echo "Downloading $nginx_tarball_url"
 curl -L $nginx_tarball_url | tar xzv
 
-echo "Downloading $pcre_tarball_url"
-(cd nginx-${NGINX_VERSION} && curl -L $pcre_tarball_url | tar xvz )
-
 echo "Downloading $headers_more_nginx_module_url"
 (cd nginx-${NGINX_VERSION} && curl -L $headers_more_nginx_module_url | tar xvz )
 
@@ -37,7 +32,8 @@ echo "Downloading $uuid4_url"
 (cd nginx-${NGINX_VERSION} && curl -L $uuid4_url | tar xvz )
 
 configure_opts=(
-  --with-pcre="pcre-${PCRE_VERSION}"
+  --with-pcre
+  --without-pcre2
   --with-zlib="zlib-${ZLIB_VERSION}"
   --with-http_gzip_static_module
   --with-http_realip_module
