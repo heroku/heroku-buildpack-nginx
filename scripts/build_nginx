@@ -4,6 +4,11 @@
 # image. More information on the Heroku Stack can be found
 # at https://devcenter.heroku.com/articles/stack
 
+# fail hard
+set -o pipefail
+# fail harder
+set -eu
+
 NGINX_VERSION=${NGINX_VERSION-1.25.1}
 HEADERS_MORE_VERSION=${HEADERS_MORE_VERSION-0.34}
 UUID4_VERSION=${UUID4_VERSION-master}
@@ -14,17 +19,17 @@ uuid4_url=https://github.com/cybozu/nginx-uuid4-module/archive/${UUID4_VERSION}.
 
 temp_dir=$(mktemp -d /tmp/nginx.XXXXXXXXXX)
 
-cd $temp_dir
-echo "Temp dir: $temp_dir"
+trap popd EXIT
+pushd "$temp_dir"
 
 echo "Downloading $nginx_tarball_url"
-curl -L $nginx_tarball_url | tar xzv
+curl -sSL "$nginx_tarball_url" | tar xzv
 
 echo "Downloading $headers_more_nginx_module_url"
-(cd nginx-${NGINX_VERSION} && curl -L $headers_more_nginx_module_url | tar xvz )
+curl -sSL "$headers_more_nginx_module_url" | tar xvz -C "nginx-${NGINX_VERSION}"
 
 echo "Downloading $uuid4_url"
-(cd nginx-${NGINX_VERSION} && curl -L $uuid4_url | tar xvz )
+curl -sSL "$uuid4_url" | tar xvz -C "nginx-${NGINX_VERSION}"
 
 configure_opts=(
   --with-pcre
@@ -38,7 +43,7 @@ configure_opts=(
 
 # This will build `nginx`
 (
-  cd nginx-${NGINX_VERSION}
+  cd "nginx-${NGINX_VERSION}"
   ./configure \
     --prefix=/tmp/nginx \
     "${configure_opts[@]}"
@@ -47,7 +52,7 @@ configure_opts=(
 
 # This will build `nginx-debug`
 (
-  cd nginx-${NGINX_VERSION}
+  cd "nginx-${NGINX_VERSION}"
   ./configure \
     --with-debug \
     --prefix=/tmp/nginx-debug \
@@ -57,8 +62,8 @@ configure_opts=(
 
 release_dir=$(mktemp -d /tmp/nginx.XXXXXXXXXX)
 
-cp /tmp/nginx/sbin/nginx $release_dir/nginx
-cp /tmp/nginx-debug/sbin/nginx $release_dir/nginx-debug
-cp /tmp/nginx/conf/mime.types $release_dir/mime.types
-tar -zcvf /tmp/nginx-"${STACK}".tgz -C $release_dir .
-cp /tmp/nginx-"${STACK}".tgz $1
+cp /tmp/nginx/sbin/nginx "$release_dir/nginx"
+cp /tmp/nginx-debug/sbin/nginx "$release_dir/nginx-debug"
+cp /tmp/nginx/conf/mime.types "$release_dir/mime.types"
+tar -zcvf /tmp/nginx-"${STACK}".tgz -C "$release_dir" .
+cp /tmp/nginx-"${STACK}".tgz "$1"
