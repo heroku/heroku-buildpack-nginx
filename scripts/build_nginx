@@ -6,13 +6,11 @@
 
 NGINX_VERSION=${NGINX_VERSION-1.25.1}
 HEADERS_MORE_VERSION=${HEADERS_MORE_VERSION-0.34}
-ZLIB_VERSION=${ZLIB_VERSION-1.3.1}
 UUID4_VERSION=${UUID4_VERSION-master}
 
 nginx_tarball_url=https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz
 headers_more_nginx_module_url=https://github.com/openresty/headers-more-nginx-module/archive/v${HEADERS_MORE_VERSION}.tar.gz
 uuid4_url=https://github.com/cybozu/nginx-uuid4-module/archive/${UUID4_VERSION}.tar.gz
-zlib_url=http://zlib.net/zlib-${ZLIB_VERSION}.tar.gz
 
 temp_dir=$(mktemp -d /tmp/nginx.XXXXXXXXXX)
 
@@ -25,16 +23,12 @@ curl -L $nginx_tarball_url | tar xzv
 echo "Downloading $headers_more_nginx_module_url"
 (cd nginx-${NGINX_VERSION} && curl -L $headers_more_nginx_module_url | tar xvz )
 
-echo "Downloading $zlib_url"
-(cd nginx-${NGINX_VERSION} && curl -L $zlib_url | tar xvz )
-
 echo "Downloading $uuid4_url"
 (cd nginx-${NGINX_VERSION} && curl -L $uuid4_url | tar xvz )
 
 configure_opts=(
   --with-pcre
   --without-pcre2
-  --with-zlib="zlib-${ZLIB_VERSION}"
   --with-http_gzip_static_module
   --with-http_realip_module
   --with-http_ssl_module
