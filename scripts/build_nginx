@@ -36,18 +36,22 @@ echo "Downloading $zlib_url"
 echo "Downloading $uuid4_url"
 (cd nginx-${NGINX_VERSION} && curl -L $uuid4_url | tar xvz )
 
+configure_opts=(
+  --with-pcre="pcre-${PCRE_VERSION}"
+  --with-zlib="zlib-${ZLIB_VERSION}"
+  --with-http_gzip_static_module
+  --with-http_realip_module
+  --with-http_ssl_module
+  --add-module="${temp_dir}/nginx-${NGINX_VERSION}/headers-more-nginx-module-${HEADERS_MORE_VERSION}"
+  --add-module="${temp_dir}/nginx-${NGINX_VERSION}/nginx-uuid4-module-${UUID4_VERSION}"
+)
+
 # This will build `nginx`
 (
   cd nginx-${NGINX_VERSION}
   ./configure \
-    --with-pcre=pcre-${PCRE_VERSION} \
-    --with-zlib=zlib-${ZLIB_VERSION} \
-    --with-http_gzip_static_module \
-    --with-http_realip_module \
-    --with-http_ssl_module \
     --prefix=/tmp/nginx \
-    --add-module=${temp_dir}/nginx-${NGINX_VERSION}/headers-more-nginx-module-${HEADERS_MORE_VERSION} \
-    --add-module=${temp_dir}/nginx-${NGINX_VERSION}/nginx-uuid4-module-${UUID4_VERSION}
+    "${configure_opts[@]}"
   make install
 )
 
@@ -56,14 +60,8 @@ echo "Downloading $uuid4_url"
   cd nginx-${NGINX_VERSION}
   ./configure \
     --with-debug \
-    --with-pcre=pcre-${PCRE_VERSION} \
-    --with-zlib=zlib-${ZLIB_VERSION} \
-    --with-http_gzip_static_module \
-    --with-http_realip_module \
-    --with-http_ssl_module \
     --prefix=/tmp/nginx-debug \
-    --add-module=${temp_dir}/nginx-${NGINX_VERSION}/headers-more-nginx-module-${HEADERS_MORE_VERSION} \
-    --add-module=${temp_dir}/nginx-${NGINX_VERSION}/nginx-uuid4-module-${UUID4_VERSION}
+    "${configure_opts[@]}"
   make install
 )
 
