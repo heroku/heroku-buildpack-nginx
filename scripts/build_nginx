@@ -48,6 +48,8 @@ configure_opts=(
     --prefix=/tmp/nginx \
     "${configure_opts[@]}"
   make install
+  # strip binary (but not the nginx-debug variant further down)
+  find /tmp/nginx -type f \( -executable -o -name '*.a' \) -exec sh -c "file -i '{}' | grep -Eq 'application/x-(archive|(pie-)?executable|sharedlib); charset=binary'" \; -print | xargs strip --strip-unneeded
 )
 
 # This will build `nginx-debug`
