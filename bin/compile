@@ -11,11 +11,11 @@ CACHE_DIR=$2
 BUILDPACK_DIR="$(dirname "$(dirname "$0")")"
 
 mkdir -p "$BUILD_DIR/bin/"
-mkdir -p "$BUILD_DIR/nginx"
-tar -zxvf "nginx-$STACK".tgz -C "$BUILD_DIR/nginx"
+nginx_tmp=$(mktemp -d -t nginx.XXXXXXXXXX)
+tar -zxvf "nginx-$STACK".tgz -C "$nginx_tmp"
 
-cp "$BUILD_DIR/nginx/nginx" "$BUILD_DIR/bin/nginx"
-cp "$BUILD_DIR/nginx/nginx-debug" "$BUILD_DIR/bin/nginx-debug"
+mv "$nginx_tmp/nginx" "$BUILD_DIR/bin/nginx"
+mv "$nginx_tmp/nginx-debug" "$BUILD_DIR/bin/nginx-debug"
 
 nginx_version=$($BUILD_DIR/bin/nginx -V 2>&1 | head -1 | awk '{ print $NF }')
 echo "-----> nginx-buildpack: Installed ${nginx_version} to app/bin"
@@ -56,7 +56,7 @@ echo '-----> nginx-buildpack: Added start-nginx-static to app/bin'
 mkdir -p "$BUILD_DIR/config"
 
 if [[ ! -f $BUILD_DIR/config/mime.types ]]; then
-	cp "$BUILD_DIR/nginx/mime.types" "$BUILD_DIR/config/"
+	mv "$nginx_tmp/mime.types" "$BUILD_DIR/config/"
 	echo '-----> nginx-buildpack: Default mime.types copied to app/config/'
 else
 	echo '-----> nginx-buildpack: Custom mime.types found in app/config.'
@@ -70,6 +70,6 @@ else
 fi
 
 # cleanup
-rm -r "$BUILD_DIR/nginx"
+rm -r "$nginx_tmp"
 
 exit 0

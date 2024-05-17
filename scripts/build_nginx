@@ -64,8 +64,7 @@ configure_opts=(
 
 release_dir=$(mktemp -d /tmp/nginx.XXXXXXXXXX)
 
-cp /tmp/nginx/sbin/nginx "$release_dir/nginx"
-cp /tmp/nginx-debug/sbin/nginx "$release_dir/nginx-debug"
-cp /tmp/nginx/conf/mime.types "$release_dir/mime.types"
-tar -zcvf /tmp/nginx-"${STACK}".tgz -C "$release_dir" .
-cp /tmp/nginx-"${STACK}".tgz "$1"
+mv /tmp/nginx/sbin/nginx "$release_dir/nginx"
+mv /tmp/nginx-debug/sbin/nginx "$release_dir/nginx-debug"
+mv /tmp/nginx/conf/mime.types "$release_dir/mime.types"
+tar -zcvf "$1" -C "$release_dir" .
