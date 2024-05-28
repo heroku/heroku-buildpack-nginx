@@ -19,8 +19,8 @@ These are auto-selected based on the app's stack at build time.
 
 | Heroku Stack | Nginx Version |
 |--------------|--------------:|
-| `Heroku-20` | `1.25.1` |
-| `Heroku-22` | `1.25.1` |
+| `Heroku-20` | `1.26.0` |
+| `Heroku-22` | `1.26.0` |
 
 ## Presets
 
