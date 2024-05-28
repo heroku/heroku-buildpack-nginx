@@ -33,13 +33,19 @@ curl -sSL "$uuid4_url" | tar xvz -C "nginx-${NGINX_VERSION}"
 
 configure_opts=(
   --with-pcre
-  --without-pcre2
   --with-http_gzip_static_module
   --with-http_realip_module
   --with-http_ssl_module
   --add-module="${temp_dir}/nginx-${NGINX_VERSION}/headers-more-nginx-module-${HEADERS_MORE_VERSION}"
   --add-module="${temp_dir}/nginx-${NGINX_VERSION}/nginx-uuid4-module-${UUID4_VERSION}"
 )
+if [[ $STACK == heroku-2[02] ]]; then
+  # we used to build our own PCRE 8.x, and when moving to dynamic linking, we had to ensure all existing regexes in config files continued to work, so we enforced libpcre3 (8.x) usage instead of the newer PCRE2 (10.x), which has stricter validation for certain patterns (example: /[\w-.]/ is not allowed in PCRE2)
+  # but for any newer stacks, we can use the more modern PCRE2
+  configure_opts+=(
+    --without-pcre2
+  )
+fi
 
 # This will build `nginx`
 (
@@ -64,8 +70,7 @@ configure_opts=(
 
 release_dir=$(mktemp -d /tmp/nginx.XXXXXXXXXX)
 
-cp /tmp/nginx/sbin/nginx "$release_dir/nginx"
-cp /tmp/nginx-debug/sbin/nginx "$release_dir/nginx-debug"
-cp /tmp/nginx/conf/mime.types "$release_dir/mime.types"
-tar -zcvf /tmp/nginx-"${STACK}".tgz -C "$release_dir" .
-cp /tmp/nginx-"${STACK}".tgz "$1"
+mv /tmp/nginx/sbin/nginx "$release_dir/nginx"
+mv /tmp/nginx-debug/sbin/nginx "$release_dir/nginx-debug"
+mv /tmp/nginx/conf/mime.types "$release_dir/mime.types"
+tar -zcvf "$1" -C "$release_dir" .

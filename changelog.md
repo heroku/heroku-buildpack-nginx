@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Link against system zlib
 - Update nginx to 1.26.0
 - Update headers-more-nginx-module to 0.37
+- Update ruby to 3.2.4
+- Support heroku-24
+- Use PCRE2 on heroku-24 and newer
 
 ## [1.10] - 2023-06-13
 ### Changes

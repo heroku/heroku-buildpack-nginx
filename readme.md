@@ -17,10 +17,11 @@ Nginx-buildpack installs & runs the [Nginx web server](https://nginx.org/) insid
 
 These are auto-selected based on the app's stack at build time.
 
-| Heroku Stack | Nginx Version |
-|--------------|--------------:|
-| `Heroku-20` | `1.25.1` |
-| `Heroku-22` | `1.25.1` |
+| Heroku Stack | Nginx Version | PCRE version |
+|--------------|--------------:|-------------:|
+| `Heroku-20` | `1.26.0` | PCRE1 (8.x) |
+| `Heroku-22` | `1.26.0` | PCRE1 (8.x) |
+| `Heroku-24` | `1.26.0` | PCRE2 (10.x) |
 
 ## Presets
 
