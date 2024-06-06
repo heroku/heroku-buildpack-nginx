@@ -19,9 +19,9 @@ These are auto-selected based on the app's stack at build time.
 
 | Heroku Stack | Nginx Version | PCRE version |
 |--------------|--------------:|-------------:|
-| `Heroku-20` | `1.26.0` | PCRE1 (8.x) |
-| `Heroku-22` | `1.26.0` | PCRE1 (8.x) |
-| `Heroku-24` | `1.26.0` | PCRE2 (10.x) |
+| `Heroku-20` | `1.26.1` | PCRE1 (8.x) |
+| `Heroku-22` | `1.26.1` | PCRE1 (8.x) |
+| `Heroku-24` | `1.26.1` | PCRE2 (10.x) |
 
 ## Presets
 
