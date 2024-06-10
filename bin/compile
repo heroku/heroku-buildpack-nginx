@@ -44,10 +44,20 @@ if ! command -v erb &> /dev/null; then
     exit 1
   fi
 
+  # Determine the runtime directory of our buildpack to set PATH.
+  # Heroku's BUILD_DIR is /tmp/build_*{buildpack_dirname}.
+  BUILDPACK_DIRNAME=${BUILD_DIR#/tmp/**/}
+  BUILDPACK_DIRNAME=${BUILDPACK_DIRNAME##/tmp/*}
+  if [ "$BUILDPACK_DIRNAME" = "" ]; then
+      BUILDPACK_RUNTIME_DIR="/app"
+  else
+      BUILDPACK_RUNTIME_DIR="/app/${BUILDPACK_DIRNAME}"
+  fi
+
   mkdir -p "${BUILD_DIR}/.profile.d"
   # Deliberately pick the same profile.d script filepath as the Ruby buildpack,
   # so if the Ruby buildpack comes after this one, it will overwrite this script.
-  echo "export PATH=\"\${HOME}/${vendored_ruby_dir}/bin:\${PATH}\"" > "${BUILD_DIR}/.profile.d/ruby.sh"
+  echo "export PATH=\"${BUILDPACK_RUNTIME_DIR}/${vendored_ruby_dir}/bin:\${PATH}\"" > "${BUILD_DIR}/.profile.d/ruby.sh"
 
   echo "-----> nginx-buildpack: Installed Ruby ${ruby_version}"
 fi
