@@ -10,12 +10,21 @@ BUILD_DIR=$1
 CACHE_DIR=$2
 BUILDPACK_DIR="$(dirname "$(dirname "$0")")"
 
-mkdir -p "$BUILD_DIR/bin/"
-mkdir -p "$BUILD_DIR/nginx"
-tar -zxvf "nginx-$STACK".tgz -C "$BUILD_DIR/nginx"
+ruby_version="3.2.4"
+if [[ $STACK == heroku-2[02] ]]; then
+	nginx_tarball=nginx-${STACK}.tgz
+	ruby_tarball=${STACK}/ruby-${ruby_version}.tgz
+else
+	nginx_tarball=nginx-$STACK-$(dpkg --print-architecture).tgz
+	ruby_tarball=${STACK}/$(dpkg --print-architecture)/ruby-${ruby_version}.tgz
+fi
 
-cp "$BUILD_DIR/nginx/nginx" "$BUILD_DIR/bin/nginx"
-cp "$BUILD_DIR/nginx/nginx-debug" "$BUILD_DIR/bin/nginx-debug"
+mkdir -p "$BUILD_DIR/bin/"
+nginx_tmp=$(mktemp -d -t nginx.XXXXXXXXXX)
+tar -zxvf "${nginx_tarball}" -C "$nginx_tmp"
+
+mv "$nginx_tmp/nginx" "$BUILD_DIR/bin/nginx"
+mv "$nginx_tmp/nginx-debug" "$BUILD_DIR/bin/nginx-debug"
 
 nginx_version=$($BUILD_DIR/bin/nginx -V 2>&1 | head -1 | awk '{ print $NF }')
 echo "-----> nginx-buildpack: Installed ${nginx_version} to app/bin"
@@ -26,8 +35,7 @@ echo "-----> nginx-buildpack: Installed ${nginx_version} to app/bin"
 # our own copy of Ruby and ensure it's on PATH at runtime.
 if ! command -v erb &> /dev/null; then
   echo "-----> nginx-buildpack: An existing Ruby installation was not found (required for erb template support)"
-  ruby_version="3.1.2"
-  ruby_url="https://heroku-buildpack-ruby.s3.us-east-1.amazonaws.com/${STACK}/ruby-${ruby_version}.tgz"
+  ruby_url="https://heroku-buildpack-ruby.s3.us-east-1.amazonaws.com/${ruby_tarball}"
   vendored_ruby_dir=".heroku-buildpack-nginx/ruby"
   mkdir -p "${BUILD_DIR}/${vendored_ruby_dir}"
 
@@ -50,11 +58,13 @@ cp bin/start-nginx-debug "$BUILD_DIR/bin/"
 echo '-----> nginx-buildpack: Added start-nginx-debug to app/bin'
 cp bin/start-nginx-solo "$BUILD_DIR/bin/"
 echo '-----> nginx-buildpack: Added start-nginx-solo to app/bin'
+cp bin/start-nginx-static "$BUILD_DIR/bin/"
+echo '-----> nginx-buildpack: Added start-nginx-static to app/bin'
 
 mkdir -p "$BUILD_DIR/config"
 
 if [[ ! -f $BUILD_DIR/config/mime.types ]]; then
-	cp "$BUILD_DIR/nginx/mime.types" "$BUILD_DIR/config/"
+	mv "$nginx_tmp/mime.types" "$BUILD_DIR/config/"
 	echo '-----> nginx-buildpack: Default mime.types copied to app/config/'
 else
 	echo '-----> nginx-buildpack: Custom mime.types found in app/config.'
@@ -68,6 +78,6 @@ else
 fi
 
 # cleanup
-rm -r "$BUILD_DIR/nginx"
+rm -r "$nginx_tmp"
 
 exit 0

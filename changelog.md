@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [unreleased] - XXXX-XX-XX
+### Changes
+- Update Nginx to 1.26.1
+
+## [1.11] - 2024-05-29
+### Changes
+- [heroku-18] Removed
+- Add documentation for migrating from heroku-community/static buildpack
+- Link against system libpcre3
+- Link against system zlib
+- Update nginx to 1.26.0
+- Update headers-more-nginx-module to 0.37
+- Update ruby to 3.2.4
+- Support heroku-24
+- Use PCRE2 on heroku-24 and newer
+
+## [1.10] - 2023-06-13
+### Changes
+- New "Static site" preset config
+- New `bin/start-nginx-static` to simply start Nginx, its process attached and sending logs to stdout
+- [all stacks] updated nginx to 1.25.1, zlib to 1.2.13, headers-more-nginx-module to 0.34, ruby to 3.2.2
+
 ## [1.9] - 2022-06-21
 ### Changes
 - If a Ruby installation is not found (required for the ERB templating feature), this buildpack will now install its own, to ensure it works on Heroku-22.
