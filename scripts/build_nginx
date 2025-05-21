@@ -11,10 +11,14 @@ set -eu
 
 NGINX_VERSION=${NGINX_VERSION-1.26.2}
 HEADERS_MORE_VERSION=${HEADERS_MORE_VERSION-0.37}
+NGX_DEVEL_KIT_VERSION=${NGX_DEVEL_KIT_VERSION-0.3.4}
+SET_MISC_VERSION=${SET_MISC_VERSION-0.33}
 UUID4_VERSION=${UUID4_VERSION-f8f7ff44e6a8c6cf75232ae4b63d011f2f3b34c1}
 
 nginx_tarball_url=https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz
 headers_more_nginx_module_url=https://github.com/openresty/headers-more-nginx-module/archive/v${HEADERS_MORE_VERSION}.tar.gz
+ngx_devel_kit_url=https://github.com/vision5/ngx_devel_kit/archive/v${NGX_DEVEL_KIT_VERSION}.tar.gz
+set_misc_nginx_module_url=https://github.com/openresty/set-misc-nginx-module/archive/v${SET_MISC_VERSION}.tar.gz
 uuid4_url=https://github.com/cybozu/nginx-uuid4-module/archive/${UUID4_VERSION}.tar.gz
 
 temp_dir=$(mktemp -d /tmp/nginx.XXXXXXXXXX)
@@ -28,6 +32,12 @@ curl -sSL "$nginx_tarball_url" | tar xzv
 echo "Downloading $headers_more_nginx_module_url"
 curl -sSL "$headers_more_nginx_module_url" | tar xvz -C "nginx-${NGINX_VERSION}"
 
+echo "Downloading $ngx_devel_kit_url"
+curl -sSL "$ngx_devel_kit_url" | tar xvz -C "nginx-${NGINX_VERSION}"
+
+echo "Downloading $set_misc_nginx_module_url"
+curl -sSL "$set_misc_nginx_module_url" | tar xvz -C "nginx-${NGINX_VERSION}"
+
 echo "Downloading $uuid4_url"
 curl -sSL "$uuid4_url" | tar xvz -C "nginx-${NGINX_VERSION}"
 
@@ -36,7 +46,10 @@ configure_opts=(
   --with-http_gzip_static_module
   --with-http_realip_module
   --with-http_ssl_module
+  --with-http_sub_module
   --add-module="${temp_dir}/nginx-${NGINX_VERSION}/headers-more-nginx-module-${HEADERS_MORE_VERSION}"
+  --add-module="${temp_dir}/nginx-${NGINX_VERSION}/ngx_devel_kit-${NGX_DEVEL_KIT_VERSION}"
+  --add-module="${temp_dir}/nginx-${NGINX_VERSION}/set-misc-nginx-module-${SET_MISC_VERSION}"
   --add-module="${temp_dir}/nginx-${NGINX_VERSION}/nginx-uuid4-module-${UUID4_VERSION}"
 )
 if [[ $STACK == heroku-2[02] ]]; then
