@@ -19,8 +19,8 @@ These are auto-selected based on the app's stack at build time.
 
 | [Heroku Stack](https://devcenter.heroku.com/articles/stack) | Nginx Version | PCRE version |
 |--------------|--------------:|-------------:|
-| [Heroku-22](https://devcenter.heroku.com/articles/heroku-22-stack) | 1.26.2 | PCRE1 (8.x) |
-| [Heroku-24](https://devcenter.heroku.com/articles/heroku-24-stack) | 1.26.2 | PCRE2 (10.x) |
+| [Heroku-22](https://devcenter.heroku.com/articles/heroku-22-stack) | 1.28.0 | PCRE1 (8.x) |
+| [Heroku-24](https://devcenter.heroku.com/articles/heroku-24-stack) | 1.28.0 | PCRE2 (10.x) |
 
 ## Presets
 

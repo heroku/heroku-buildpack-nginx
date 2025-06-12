@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [unreleased] - YYYY-MM-DD
 ### Changes
 - Drop support for heroku-20
+- Update Nginx to 1.28.0
 
 ## [1.13] - 2024-08-30
 ### Changes
