@@ -39,7 +39,7 @@ configure_opts=(
   --add-module="${temp_dir}/nginx-${NGINX_VERSION}/headers-more-nginx-module-${HEADERS_MORE_VERSION}"
   --add-module="${temp_dir}/nginx-${NGINX_VERSION}/nginx-uuid4-module-${UUID4_VERSION}"
 )
-if [[ $STACK == heroku-2[02] ]]; then
+if [[ $STACK == "heroku-22" ]]; then
   # we used to build our own PCRE 8.x, and when moving to dynamic linking, we had to ensure all existing regexes in config files continued to work, so we enforced libpcre3 (8.x) usage instead of the newer PCRE2 (10.x), which has stricter validation for certain patterns (example: /[\w-.]/ is not allowed in PCRE2)
   # but for any newer stacks, we can use the more modern PCRE2
   configure_opts+=(
