@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [unreleased] - YYYY-MM-DD
+### Changes
+- Drop support for heroku-20
+- Update Nginx to 1.28.0
+- Update headers-more-nginx-module to 0.38
+- Update Ruby to 3.2.8
 
 ## [1.13] - 2024-08-30
 ### Changes
