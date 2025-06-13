@@ -10,8 +10,8 @@ BUILD_DIR=$1
 CACHE_DIR=$2
 BUILDPACK_DIR="$(dirname "$(dirname "$0")")"
 
-ruby_version="3.2.4"
-if [[ $STACK == heroku-2[02] ]]; then
+ruby_version="3.2.8"
+if [[ $STACK == "heroku-22" ]]; then
 	nginx_tarball=nginx-${STACK}.tgz
 	ruby_tarball=${STACK}/ruby-${ruby_version}.tgz
 else
