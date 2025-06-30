@@ -17,4 +17,4 @@ jobs:
       - name: Check that CHANGELOG is touched
         run: |
           git fetch origin ${{ github.base_ref }} --depth 1 && \
-          git diff remotes/origin/${{ github.base_ref }} --name-only | grep changelog.md
+          git diff remotes/origin/${{ github.base_ref }} --name-only | grep CHANGELOG.md
