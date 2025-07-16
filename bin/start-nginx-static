@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 echo 'buildpack=nginx at=erb-interpolate-config'
 erb config/nginx.conf.erb > config/nginx.conf
 
