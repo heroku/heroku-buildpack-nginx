@@ -121,3 +121,17 @@ _Ruby versions are downloaded from heroku-buildpack-ruby's distribution site. On
 Revise the `ruby_version` variable in `bin/compile`.
 
 Then, commit & pull-request the resulting changes.
+
+## Releasing a New Version
+
+_Only maintainers of this buildpack can make releases._
+
+_Replace "X.X" with the new version number._
+
+1. Update `CHANGELOG.md`, moving the **[unreleased] - YYYY-MM-DD** section contents into a new version section for version X.X
+2. Create a branch `preparing-release-X.X` with PR **Preparing release X.X**
+3. Get the PR approved
+4. Create a new [GitHub release](https://github.com/heroku/heroku-buildpack-nginx/releases) for the new version
+5. Merge the approved PR
+6. [Publish a new release](https://addons-next.heroku.com/buildpacks/cf2713a5-65d0-4bc8-8dd2-b00d8d4f03f4/publish) in Heroku Buildpack Registry.
+
