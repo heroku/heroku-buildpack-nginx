@@ -5,8 +5,8 @@ Nginx-buildpack installs & runs the [Nginx web server](https://nginx.org/) insid
 ## Features
 
 * Presets for specific use-cases
-	- [Static sites](static.md)
-	- [Local proxy to app servers](proxy.md)
+	- [Static sites](STATIC.md)
+	- [Local proxy to app servers](PROXY.md)
 * Complete control of Nginx config in `config/nginx.conf.erb`
 	- [`erb` template](https://github.com/ruby/erb) supports dynamic config at start-up
 	- see [Nginx docs](https://nginx.org/en/docs/)
@@ -26,19 +26,19 @@ These are auto-selected based on the app's stack at build time.
 
 With Nginx's flexibility, it can be configured & used for many different purposes. See the documentation for the mode you wish to use.
 
-### [Static sites](static.md)
+### [Static sites](STATIC.md)
 
-HTTP server for websites and single page apps. [[docs](static.md)]
+HTTP server for websites and single page apps. [[docs](STATIC.md)]
 
-### [Local proxy](proxy.md)
+### [Local proxy](PROXY.md)
 
-HTTP proxy to an app server running in the same dyno, via UNIX domain sockets. [[docs](proxy.md)]
+HTTP proxy to an app server running in the same dyno, via UNIX domain sockets. [[docs](PROXY.md)]
 
 _Proxy is the original buildpack mode that is enabled by default, if the `config/nginx.conf.erb` file is not added to app source._
 
 ### Solo mode (deprecated)
 
-This mode has been superceeded by [Static mode](static.md).
+This mode has been superceeded by [Static mode](STATIC.md).
 
 ## Custom Nginx usage
 
