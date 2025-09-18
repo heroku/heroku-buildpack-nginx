@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+CONFIG_ROOT="${NGINX_CONFIG_ROOT:=config}"
+CONFIG_FILE="${NGINX_CONFIG_FILE:=nginx.conf.erb}"
+
+# Evaluate config to get $PORT
+erb $CONFIG_ROOT/$CONFIG_FILE > config/nginx.conf
