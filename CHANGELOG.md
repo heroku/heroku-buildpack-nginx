@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased] - YYYY-MM-DD
 ### Changes
+- Changed the S3 URLs used for downloads to use AWS' dual-stack (IPv6 compatible) endpoint.
 
 ## [1.15] - 2025-07-21
 ### Changes
