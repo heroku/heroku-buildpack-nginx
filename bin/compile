@@ -21,6 +21,18 @@ fi
 
 mkdir -p "$BUILD_DIR/bin/"
 nginx_tmp=$(mktemp -d -t nginx.XXXXXXXXXX)
+
+# Télécharger le tarball NGINX si absent
+if [[ ! -f "${nginx_tarball}" ]]; then
+  echo "-----> nginx-buildpack: ${nginx_tarball} not found, downloading..."
+  # Déduire l'URL de téléchargement depuis scripts/build_nginx
+  NGINX_VERSION_VAR=$(echo "$nginx_tarball" | sed -E 's/nginx-(heroku-[0-9]+)-([a-z0-9_\-]+)\\.tgz/\1/')
+  NGINX_VERSION=${NGINX_VERSION:-1.28.0}
+  # Fallback URL générique (adapter si besoin)
+  NGINX_URL="https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz"
+  curl -sSL "$NGINX_URL" -o "${nginx_tarball}"
+fi
+
 tar -zxvf "${nginx_tarball}" -C "$nginx_tmp"
 
 mv "$nginx_tmp/nginx" "$BUILD_DIR/bin/nginx"
