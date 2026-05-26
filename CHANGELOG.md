@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased] - YYYY-MM-DD
 
+## [1.18] - 2026-05-26
+### Changes
+- Update nginx from 1.28.3 to 1.30.2.
+
 ## [1.17] - 2026-04-14
 ### Changes
 - Add support for Heroku-26.
