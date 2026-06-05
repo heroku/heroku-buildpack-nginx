@@ -21,8 +21,6 @@ The [default config `config/nginx.conf.erb`](config/nginx.conf.erb) will be load
 
 ## Logging
 
-**Proxy mode writes logs to files, which is not the Heroku way. They should go to stdout.**
-
 Nginx will output the following style of logs:
 
 ```
