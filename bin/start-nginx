@@ -4,8 +4,23 @@ psmgr=/tmp/nginx-buildpack-wait
 rm -f $psmgr
 mkfifo $psmgr
 
-# Evaluate config to get $PORT
-erb config/nginx.conf.erb > config/nginx.conf
+# ERB templating code (PORT only available in start)
+cd config
+shopt -s nullglob
+for conf_file in **/*.erb
+do
+  target=$(basename ${conf_file%.*})
+  erb $conf_file > $target
+done
+
+for conf_file in *.erb
+do
+  target=${conf_file%.*}
+  erb $conf_file > $target
+done
+cd ..
+echo 'buildpack=nginx at=erb-templates-compiled'
+# End ERB templating code
 
 n=1
 while getopts :f option ${@:1:2}
@@ -15,6 +30,10 @@ do
     f) FORCE=$OPTIND; n=$((n+1));;
   esac
 done
+
+# Initialize cache directory.
+mkdir -p cache
+echo 'buildpack=nginx at=cache-initialized'
 
 # Initialize log directory.
 mkdir -p logs/nginx
