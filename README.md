@@ -130,7 +130,7 @@ _Only maintainers of this buildpack can make releases._
 _Replace "X.X" with the new version number._
 
 1. Update `CHANGELOG.md`, moving the **[unreleased] - YYYY-MM-DD** section contents into a new version section for version X.X
-2. Create a branch `preparing-release-X.X` with PR **Preparing release X.X**
+2. Create a branch `prepare-release` with PR **Prepare release X.X**
 3. Get the PR approved
 4. Merge the approved PR
 5. Create a new [GitHub release](https://github.com/heroku/heroku-buildpack-nginx/releases) for the new version, targetting `main`, with name and tag of form `vX.Y`.
