@@ -6,7 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased] - YYYY-MM-DD
 ### Changes
-- Compile nginx with the `ngx_http_stub_status_module` enabled, so apps can expose nginx connection/request metrics via the `stub_status` directive (e.g. for Datadog or Prometheus). ([#156](https://github.com/heroku/heroku-buildpack-nginx/pull/156))
+- nginx is now compiled with `ngx_http_stub_status_module` enabled, so apps can expose nginx connection/request metrics via the `stub_status` directive (e.g. for Datadog or Prometheus). ([#156](https://github.com/heroku/heroku-buildpack-nginx/pull/156))
+- Update nginx from 1.30.4 to 1.30.5. ([#163](https://github.com/heroku/heroku-buildpack-nginx/pull/163))
+- Update headers-more-nginx-module from 0.39 to 0.40. ([#163](https://github.com/heroku/heroku-buildpack-nginx/pull/163))
 
 ## [1.19] - 2026-09-03
 ### Changes
