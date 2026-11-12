@@ -19,9 +19,9 @@ These are auto-selected based on the app's stack at build time.
 
 | [Heroku Stack](https://devcenter.heroku.com/articles/stack) | Nginx Version | PCRE version |
 |--------------|--------------:|-------------:|
-| [Heroku-22](https://devcenter.heroku.com/articles/heroku-22-stack) | 1.30.4 | PCRE1 (8.x) |
-| [Heroku-24](https://devcenter.heroku.com/articles/heroku-24-stack) | 1.30.4 | PCRE2 (10.x) |
-| [Heroku-26](https://devcenter.heroku.com/articles/heroku-26-stack) | 1.30.4 | PCRE2 (10.x) |
+| [Heroku-22](https://devcenter.heroku.com/articles/heroku-22-stack) | 1.30.6 | PCRE1 (8.x) |
+| [Heroku-24](https://devcenter.heroku.com/articles/heroku-24-stack) | 1.30.6 | PCRE2 (10.x) |
+| [Heroku-26](https://devcenter.heroku.com/articles/heroku-26-stack) | 1.30.6 | PCRE2 (10.x) |
 
 ## Presets
 
@@ -113,7 +113,11 @@ Revise the version variables in `scripts/build_nginx`, and then run the builds i
 $ make build
 ```
 
-Then, commit & pull-request the resulting changes.
+Then:
+
+1. Update the Nginx versions in the [Nginx versions](#nginx-versions) table above.
+2. Add an entry for each upgraded dependency to the **[unreleased]** section of `CHANGELOG.md`.
+3. Commit & pull-request the resulting changes.
 
 ### Upgrading Ruby
 
