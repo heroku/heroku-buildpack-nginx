@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [unreleased] - YYYY-MM-DD
+### Added
+- `NGINX_GRACEFUL_SIGTERM=1` makes a dyno restart finish the requests in flight instead of dropping them. Nginx is built with a patch that, with the variable set, makes it ignore SIGTERM, and `start-nginx`, `start-nginx-debug` and `start-nginx-solo` then stop it with SIGQUIT and wait for it and the app to exit. Without the variable, nothing changes. See "Graceful shutdown" in PROXY.md.
+- The default config sets `worker_shutdown_timeout 25s`, so that a graceful stop ends before Heroku's SIGKILL.
 
 ## [1.21] - 2026-11-12
 ### Changes

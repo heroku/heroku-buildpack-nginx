@@ -1,0 +1,30 @@
+--- a/src/os/unix/ngx_process.c
++++ b/src/os/unix/ngx_process.c
+@@ -284,12 +284,27 @@
+ ngx_int_t
+ ngx_init_signals(ngx_log_t *log)
+ {
++    char              *graceful;
+     ngx_signal_t      *sig;
+     struct sigaction   sa;
+ 
++    /*
++     * Heroku sends SIGTERM to every process in a dyno at once, and nginx
++     * treats SIGTERM as "exit now", dropping the requests in flight.  With
++     * NGINX_GRACEFUL_SIGTERM set to a non-zero number, SIGTERM is ignored,
++     * and whatever started nginx is expected to stop it with SIGQUIT.
++     */
++    graceful = getenv("NGINX_GRACEFUL_SIGTERM");
++
+     for (sig = signals; sig->signo != 0; sig++) {
+         ngx_memzero(&sa, sizeof(struct sigaction));
+ 
++        if (sig->signo == ngx_signal_value(NGX_TERMINATE_SIGNAL)
++            && graceful != NULL && atoi(graceful) != 0)
++        {
++            sig->handler = NULL;
++        }
++
+         if (sig->handler) {
+             sa.sa_sigaction = sig->handler;
+             sa.sa_flags = SA_SIGINFO;

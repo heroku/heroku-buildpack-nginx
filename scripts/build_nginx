@@ -17,6 +17,7 @@ nginx_tarball_url=https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz
 headers_more_nginx_module_url=https://github.com/openresty/headers-more-nginx-module/archive/v${HEADERS_MORE_VERSION}.tar.gz
 uuid4_url=https://github.com/cybozu/nginx-uuid4-module/archive/${UUID4_VERSION}.tar.gz
 
+patches_dir="$(cd "$(dirname "$0")" && pwd)/patches"
 temp_dir=$(mktemp -d /tmp/nginx.XXXXXXXXXX)
 
 trap popd EXIT
@@ -24,6 +25,11 @@ pushd "$temp_dir"
 
 echo "Downloading $nginx_tarball_url"
 curl -sSL "$nginx_tarball_url" | tar xzv
+
+# Lets NGINX_GRACEFUL_SIGTERM make nginx ignore SIGTERM (see PROXY.md).
+# Without that variable the patched nginx behaves exactly like a stock one.
+echo "Applying ${patches_dir}/graceful-sigterm.patch"
+patch -d "nginx-${NGINX_VERSION}" -p1 < "${patches_dir}/graceful-sigterm.patch"
 
 echo "Downloading $headers_more_nginx_module_url"
 curl -sSL "$headers_more_nginx_module_url" | tar xvz -C "nginx-${NGINX_VERSION}"
