@@ -62,6 +62,27 @@ web: bin/start-nginx-debug bundle exec unicorn -c config/unicorn.rb
 
 Proxy mode will not start Nginx until a file has been written to `/tmp/app-initialized`. Since Nginx binds to the dyno's `$PORT` and since the `$PORT` determines if the app can receive traffic, you can delay Nginx accepting traffic until your application is ready to handle it. The [examples below](#example-proxy-setup) show how/when you should write the file when working with Unicorn.
 
+## Graceful shutdown
+
+When a dyno restarts (a deploy, a config change, the daily cycle), Heroku [sends SIGTERM to every process in the dyno](https://devcenter.heroku.com/articles/dyno-shutdown-behavior), then SIGKILL 30 seconds later. Nginx treats SIGTERM as "exit now", and `start-nginx` exits on it too, which ends the dyno. So by default, requests that are in flight at that moment get no response: the router logs `H13 Connection closed without response`, and the client gets a 503.
+
+To have them finished first, set:
+
+```bash
+$ heroku config:set NGINX_GRACEFUL_SIGTERM=1
+```
+
+Then, when SIGTERM arrives:
+
+* Nginx ignores it. (The buildpack's nginx is built with a small patch that does this only when the variable is set. It is the same approach as [Heroku's PHP buildpack](https://github.com/heroku/heroku-buildpack-php/blob/main/support/build/patches/nginx-ignoresigterm.patch).)
+* `start-nginx` survives it and sends nginx SIGQUIT, nginx's graceful stop: it stops accepting connections, finishes the requests it has, and exits.
+* Your app server receives SIGTERM from Heroku as usual, and should finish its own requests before exiting. Puma, Unicorn and Gunicorn all do.
+* `start-nginx` exits once both nginx and the app have, so the dyno stays up while they finish.
+
+Everything must be done within Heroku's 30 seconds. A long-lived connection, such as a WebSocket or a slow download, can keep nginx waiting until then, so set `worker_shutdown_timeout` in your config to end those connections in time. The default config sets it to 25 seconds.
+
+This works with `start-nginx`, `start-nginx-debug` and `start-nginx-solo`. Without the variable, nothing changes.
+
 ## Force SSL
 
 You can add a redirect/force SSL based on Heroku headers. Full, commented example in the [default config file](config/nginx.conf.erb) or in the [nextjs with forceSSL config file](config/nginx-nextjs-with-forcessl.conf.erb).

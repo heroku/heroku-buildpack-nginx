@@ -4,6 +4,20 @@ psmgr=/tmp/nginx-buildpack-wait
 rm -f $psmgr
 mkfifo $psmgr
 
+# With NGINX_GRACEFUL_SIGTERM set, requests that are in flight when the dyno
+# is told to stop are finished first. See "Graceful shutdown" in PROXY.md.
+graceful=
+if [[ "${NGINX_GRACEFUL_SIGTERM:-}" =~ ^[1-9][0-9]*$ ]]
+then
+  graceful=1
+  # Keep the fifo open, so that a process reporting its exit below never has
+  # to wait for a reader.
+  exec 3<>$psmgr
+  # Heroku sends SIGTERM to every process in the dyno, this script included.
+  # Survive it, and note that it arrived.
+  trap 'stopping=1' TERM
+fi
+
 # Evaluate config to get $PORT
 erb config/nginx.conf.erb > config/nginx.conf
 
@@ -23,6 +37,9 @@ echo 'buildpack=nginx at=logs-initialized'
 
 # Start log redirection.
 (
+  # tail has no SIGTERM handler of its own, so it inherits this "ignore" and
+  # goes on relaying nginx's logs while nginx finishes.
+  [[ $graceful ]] && trap '' TERM
   # Redirect nginx logs to stdout.
   tail -qF -n 0 logs/nginx/*.log
   echo 'logs' >$psmgr
@@ -33,9 +50,25 @@ echo 'buildpack=nginx at=logs-initialized'
   #We expect nginx to run in foreground.
   #We also expect a socket to be at /tmp/nginx.socket.
   echo 'buildpack=nginx at=nginx-start'
-  bin/nginx -p . -c config/nginx.conf
+  if [[ $graceful ]]
+  then
+    # nginx ignores SIGTERM when NGINX_GRACEFUL_SIGTERM is set. Pass the
+    # SIGTERM this subshell receives on to it as SIGQUIT: stop accepting
+    # connections, finish the requests in flight, then exit.
+    trap 'echo "buildpack=nginx at=nginx-graceful-stop"; kill -QUIT $nginx 2>/dev/null' TERM
+    bin/nginx -p . -c config/nginx.conf &
+    nginx=$!
+    # wait returns early when the trap runs, so wait until nginx is gone.
+    while kill -0 $nginx 2>/dev/null
+    do
+      wait $nginx
+    done
+  else
+    bin/nginx -p . -c config/nginx.conf
+  fi
   echo 'nginx' >$psmgr
 ) &
+nginx_pid=$!
 
 # This read will block the process waiting on a msg to be put into the fifo.
 # If any of the processes defined above should exit,
@@ -44,5 +77,17 @@ echo 'buildpack=nginx at=logs-initialized'
 # will use it's process name as a msg so that we can print the offending
 # process to stdout.
 read exit_process <$psmgr
+
+if [[ $stopping ]]
+then
+  # SIGTERM arrived, and nginx is finishing the requests in flight. Stay
+  # until it is done: this script is the dyno's main process, and the dyno
+  # ends when it exits.
+  echo 'buildpack=nginx at=graceful-shutdown'
+  wait $nginx_pid
+  echo 'buildpack=nginx at=exit process=sigterm'
+  exit 0
+fi
+
 echo "buildpack=nginx at=exit process=$exit_process"
 exit 1

@@ -1,6 +1,10 @@
 daemon off;
 # Heroku dynos have at least 4 cores.
 worker_processes <%= ENV['NGINX_WORKERS'] || 4 %>;
+# A graceful stop (see NGINX_GRACEFUL_SIGTERM in PROXY.md) closes any
+# connection still open after this long, so that it ends before Heroku's
+# SIGKILL 30 seconds after SIGTERM.
+worker_shutdown_timeout 25s;
 
 events {
 	use epoll;
