@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased] - YYYY-MM-DD
 
+### Changes
+- Update nginx from 1.30.6 to 1.30.7. ([#169](https://github.com/heroku/heroku-buildpack-nginx/pull/169))
+
 ## [1.21] - 2026-11-12
 ### Changes
 - Update nginx from 1.30.5 to 1.30.6. ([#165](https://github.com/heroku/heroku-buildpack-nginx/pull/165))
